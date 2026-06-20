@@ -7,7 +7,7 @@ function navClass($page, $currentPage) {
 }
 ?>
 <nav>
-    <a href="index" class="<?php echo navClass('index', $currentPage); ?>">Home</a>
+    <a href="index" class="<?php echo navClass('index', $currentPage); ?>">Acceuil</a>
     <a href="about" class="<?php echo navClass('about', $currentPage); ?>">About</a>
     <a href="services" class="<?php echo navClass('services', $currentPage); ?>">Services</a>
     <a href="contact" class="<?php echo navClass('contact', $currentPage); ?>">Contact</a>
