@@ -1,5 +1,4 @@
 <?php
-// index.php — Project homepage
 
 $pageTitle = "My PHP Project";
 $welcomeMessage = "Welcome to your new PHP project!";

@@ -1,8 +1,6 @@
 <?php
-// services.php
-$pageTitle = "Services - My PHP Project";
 
-// Example: dynamic data, like you'd eventually pull from a database
+$pageTitle = "Services - My PHP Project";
 $services = [
     "Web Development",
     "Database Design",

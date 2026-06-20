@@ -1,5 +1,4 @@
 <?php
-// about.php
 $pageTitle = "About - My PHP Project";
 ?>
 <!DOCTYPE html>

@@ -1,15 +1,13 @@
 <?php
-// contact.php
+
 $pageTitle = "Contact - My PHP Project";
 $successMessage = "";
 
-// Example form handling (no database yet — just demonstrates the flow)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = htmlspecialchars(trim($_POST['name'] ?? ''));
     $email = htmlspecialchars(trim($_POST['email'] ?? ''));
 
     if ($name && $email) {
-        // Here's where you'd normally save to a database
         $successMessage = "Thanks, $name! We'll reach you at $email.";
     }
 }
