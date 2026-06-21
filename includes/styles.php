@@ -127,4 +127,8 @@
         border-radius: 4px;
         font-size: 1rem;
     }
+
+    hr{
+        margin-bottom: 25px;
+    }
 </style>

@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 12px;
             max-width: 400px;
         }
+
         .success {
             color: #27ae60;
             margin-top: 10px;

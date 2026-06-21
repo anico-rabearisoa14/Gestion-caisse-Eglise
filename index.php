@@ -1,14 +1,24 @@
 <?php
-$pageTitle = "New thing";
+$pageTitle = "Veuillez entrer les informations de votre Eglise";
 $welcomeMessage = "Biienvenu !";
 $currentDate = date("F j, Y");
 $projectName = 'GestionEglise';
 
 // check if there is an Eglise
-function chekAvailability() :string{ $contientUne = false; $state = ($contientUne) ? 'none' : 'block'; return $state; }
-function showInfo() :string{ $contientUne = true; $state = ($contientUne) ? 'block' : 'none'; return $state; }
+require_once 'crud/eglise.php';
+if ($info = listeInfoEglise()) {
+    $contientUne = true;
+} else {
+    $contientUne = false;
+}
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = $_POST['ideglise'];
+    $design = $_POST['Design'];
+    $result = createEglise($id, $design, 10000);
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,24 +37,26 @@ function showInfo() :string{ $contientUne = true; $state = ($contientUne) ? 'blo
         <h1><?php echo htmlspecialchars($pageTitle); ?></h1>
     </header>
 
-    <div class="wrapper" style="display: none;">
-        <h4 class="form-title">Ajouter votre eglise ici</h4><hr>
+    <div class="wrapper" style="display: <?php echo htmlspecialchars($contientUne ? 'none' : 'block') ?>;">
+        <h4 class="form-title">Completer le form </h4>
+        <hr>
         <!-- should be flex the form on the middle -->
-            <form class="form-container" action="">
-                <label for="ideglise">ID Eglise</label><input type="text" name="ideglise" required>
-                <label for="Design">Designation</label><input type="text" name="Design" required>
-                <button class="submit-btn" type="submit">Ajouter</button>
-            </form>
-        </div>
+        <form class="form-container" method="POST" action="">
+            <label for="ideglise">ID Eglise</label><input type="text" name="ideglise" required>
+            <label for="Design">Designation</label><input type="text" name="Design" required>
+            <button class="submit-btn" type="submit">Ajouter</button>
+        </form>
+    </div>
     </div>
 
-    <div class="wrapper" style="display: <?php echo htmlspecialchars(showInfo()) ?>;">
-        <h4 class="form-title">Informations sur l'Eglise</h4><hr>
+    <div class="wrapper" style="display: <?php echo htmlspecialchars($contientUne ? 'block' : 'none') ?>;">
+        <h4 class="form-title">Informations sur l'Eglise </h4>
+        <hr>
         <div class="form-container">
             <ul class="info-liste">
-                <li><b>ID : </b></li>
-                <li><b>Design:</b></li>
-                <li><b>Solde:</b></li>
+                <li><b>ID : </b> <?php echo htmlspecialchars($info['ideglise']) ?></li>
+                <li><b>Design:</b> <?php echo htmlspecialchars($info['Design']) ?></li>
+                <li><b>Solde:</b> <?php echo htmlspecialchars($info['Solde']) ?><span> Ar</span></li>
             </ul>
         </div>
     </div>

@@ -1,4 +1,6 @@
 <?php
+require_once 'db/databasehelper.php';
+
 // EGLISE
 
 // CREATE TABLE EGLISE (
@@ -7,16 +9,37 @@
 //     Solde INT DEFAULT 0
 // );
 
- // creer une eglise
-function createEglise($ideglise ,$Design ,$Solde) {
-
+// creer une eglise
+function createEglise($ideglise, $Design, $Solde): bool
+{
+    global $pdo;
+    try {
+        $sql = "INSERT INTO eglise(ideglise, Design, Solde) VALUES (:id ,:design ,:solde)";
+        $result = $pdo->prepare($sql);
+        $result->execute([':id' => $ideglise, ':design' => $Design, ':solde' => $Solde]);
+        return true;
+    } catch (PDOException $e) {
+        return false;
+    }
 }
+
 // afficher lse informations d'une eglise
-function listeInfoEglise($ideglise) :array {
-$info = [ 'id' => '$ideglise'];
-return $info;
+function listeInfoEglise(): ?array
+{
+    global $pdo;
+    try {
+        $sql = "SELECT * FROM eglise";
+        $result = $pdo->prepare($sql);
+        $result->execute();
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        if ($row === false) {
+            return null;
+        }
+        return $row;
+    } catch (PDOException $e) {
+        return null;
+    }
 }
-
 
 // ENTRE
 
@@ -30,11 +53,23 @@ return $info;
 // )
 
 // ajout d'une enregistrement dans l'ENTRE ()
-function ajouterEntre($ideglise ,$motif ,$montantEntre ,$dateEntre)
+function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
 {
-
+    global $pdo;
+    try {
+        $sql = "INSERT INTO entre (ideglise, motif, montantEntre, dateEntre)
+                VALUES (:ideglise, :motif, :montantEntre, :dateEntre)";
+        $result = $pdo->prepare($sql);
+        return $result->execute([
+            ':ideglise'    => $ideglise,
+            ':motif'       => $motif,
+            ':montantEntre' => $montantEntre,
+            ':dateEntre'   => $dateEntre,
+        ]);
+    } catch (PDOException $e) {
+        return false;
+    }
 }
-
 
 // SORTIE
 
@@ -49,8 +84,4 @@ function ajouterEntre($ideglise ,$motif ,$montantEntre ,$dateEntre)
 
 
 // ajout d'une enregistrement dans la SORTIE ()
-function ajouterSortie($ideglise ,$motif ,$montantSortie ,$dateSortie)
-{
-
-}
-?>
+function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie) {}
