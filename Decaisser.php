@@ -1,8 +1,7 @@
 <?php
+session_start();
 include_once 'crud/eglise.php';
-$pageTitle = "Services - My PHP Project";
-
-$pageTitle = "About - My PHP Project";
+$pageTitle = "Decaissement";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['ideglise'];
@@ -10,12 +9,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $montant = $_POST['montantSortie'];
     $date = $_POST['dateSortie'];
     $res = ajouterSortie($id, $motif, $montant, $date);
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit();
+    if ($res) {
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
 }
 
 $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
-$data = listeInfoSortie();
+// handle search option
+$query = '';
+if (isset($_SESSION['search_results'])) {
+    $data  = $_SESSION['search_results'];
+    $query = $_SESSION['search_query'];
+    unset($_SESSION['search_results']);
+    unset($_SESSION['search_query']);
+} else {
+    $data = listeInfoSortie();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,19 +47,31 @@ $data = listeInfoSortie();
     <header>
         <h1>Liste des decaissements</h1>
         <div class="button-container">
-            <div class="search-bar">
-                <input type="text" placeholder="Rechercher...">
+
+            <form class="search-bar" method="GET" action="crud/search.php">
+                <input type="hidden" name="table" value="sortie">
+                <input type="text" placeholder="Rechercher..." name="query"
+                    value="<?= htmlspecialchars($query ?? '') ?>">
+
+                <?php if (!empty($query)): ?>
+                    <a href="Decaisser.php" class="clear-btn" style="margin-right: 4px;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                <?php endif; ?>
+
                 <button type="submit">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
-            </div>
+
+            </form>
+
             <button id="ajout-btn" type="button" class="normal-btn"
                 style="margin-left:auto; background-color:#3b4a6b;">Ajouter</button>
         </div>
     </header>
 
 
-    <table border="1" class="data-table">
+    <table id="data-table" border="1" class="data-table">
         <thead style="position: sticky; top:173px">
             <tr>
                 <th class="table-index">ID Entre</th>
@@ -62,7 +84,8 @@ $data = listeInfoSortie();
         </thead>
         <tbody>
             <?php foreach ($data as $d): ?>
-                <tr>
+                <tr id="<?php echo htmlspecialchars($d['idsortie']) ?>">
+
                     <td><?php echo htmlspecialchars($d['idsortie']) ?></td>
                     <td><?php echo htmlspecialchars($d['ideglise']) ?></td>
                     <td><?php echo htmlspecialchars($d['motif']) ?></td>

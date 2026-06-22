@@ -22,7 +22,9 @@ CREATE TABLE SORTIE (
     FOREIGN KEY (ideglise) REFERENCES EGLISE(ideglise)
 );
 
+
 DELIMITER $$
+-- update solde after all actions
 
 CREATE TRIGGER ajouter_dans_solde
 AFTER INSERT ON ENTRE
@@ -40,6 +42,42 @@ BEGIN
     UPDATE EGLISE
     SET Solde = Solde - NEW.montantSortie
     WHERE ideglise = NEW.ideglise;
+END$$
+
+CREATE TRIGGER modifier_solde_entre
+AFTER UPDATE ON ENTRE
+FOR EACH ROW
+BEGIN
+    UPDATE EGLISE
+    SET Solde = Solde - OLD.montantEntre + NEW.montantEntre
+    WHERE ideglise = NEW.ideglise;
+END$$
+
+CREATE TRIGGER modifier_solde_sortie
+AFTER UPDATE ON SORTIE
+FOR EACH ROW
+BEGIN
+    UPDATE EGLISE
+    SET Solde = Solde + OLD.montantSortie - NEW.montantSortie
+    WHERE ideglise = NEW.ideglise;
+END$$
+
+CREATE TRIGGER supprimer_dans_solde
+AFTER DELETE ON ENTRE
+FOR EACH ROW
+BEGIN
+    UPDATE EGLISE
+    SET Solde = Solde - OLD.montantEntre
+    WHERE ideglise = OLD.ideglise;
+END$$
+
+CREATE TRIGGER supprimer_du_solde
+AFTER DELETE ON SORTIE
+FOR EACH ROW
+BEGIN
+    UPDATE EGLISE
+    SET Solde = Solde + OLD.montantSortie
+    WHERE ideglise = OLD.ideglise;
 END$$
 
 DELIMITER ;

@@ -118,7 +118,6 @@
         background-color: #2980b9;
     }
 
-
     .submit-btn {
         font-weight: bold;
         background-color: #3498db;
@@ -136,7 +135,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 2px 2px 6px #272626e1;
+        box-shadow: 2px 2px 6px #27262669;
 
     }
 
@@ -178,7 +177,7 @@
 
     hr {
         margin-bottom: 25px;
-        height: 3px;
+        height: 2px;
         border: none;
         border-radius: 9px;
         background-color: #2c3e50;

@@ -1,5 +1,5 @@
 <?php
-require_once 'db/databasehelper.php';
+require __DIR__ . '/../db/databasehelper.php';
 
 // EGLISE
 
@@ -93,6 +93,20 @@ function listeInfoEntre()
     }
 }
 
+function searchEntre(string $query, string $category): array
+{
+    global $pdo;
+    $allowed = ['motif', 'montantEntre', 'dateEntre', 'ideglise'];
+    if (!in_array($category, $allowed)) $category = 'motif';
+
+    $stmt = $pdo->prepare("
+        SELECT * FROM ENTRE 
+        WHERE $category LIKE :query
+    ");
+    $stmt->execute([':query' => '%' . $query . '%']);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 // SORTIE
 
 // CREATE TABLE SORTIE (
@@ -124,6 +138,8 @@ function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie) :bool {
     }
 }
 
+
+// lister tous les enregistrements
 function listeInfoSortie()
 {
     global $pdo;
@@ -140,4 +156,18 @@ function listeInfoSortie()
         error_log($e->getMessage());
         return null;
     }
+}
+
+function searchSortie(string $query, string $category): array
+{
+    global $pdo;
+    $allowed = ['motif', 'montantSortie', 'dateSortie', 'ideglise'];
+    if (!in_array($category, $allowed)) $category = 'motif';
+
+    $stmt = $pdo->prepare("
+        SELECT * FROM SORTIE 
+        WHERE $category LIKE :query
+    ");
+    $stmt->execute([':query' => '%' . $query . '%']);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
