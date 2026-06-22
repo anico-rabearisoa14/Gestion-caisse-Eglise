@@ -26,3 +26,6 @@ const addButton = document.getElementById('ajout-btn');
 addButton.addEventListener('click', function () {
     document.getElementById('pop-up-form').style.display = '';
 });
+
+console.log('Height of nav :' +  document.querySelector('nav').offsetHeight);
+console.log('Height of header :' + document.querySelector('header').offsetHeight);

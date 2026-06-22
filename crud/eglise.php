@@ -19,6 +19,7 @@ function createEglise($ideglise, $Design, $Solde): bool
         $result->execute([':id' => $ideglise, ':design' => $Design, ':solde' => $Solde]);
         return true;
     } catch (PDOException $e) {
+        error_log($e->getMessage());
         return false;
     }
 }
@@ -37,6 +38,7 @@ function listeInfoEglise(): ?array
         }
         return $row;
     } catch (PDOException $e) {
+        error_log($e->getMessage());
         return null;
     }
 }
@@ -67,6 +69,7 @@ function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
             ':dateEntre'   => $dateEntre,
         ]);
     } catch (PDOException $e) {
+        error_log($e->getMessage());
         return false;
     }
 }
@@ -85,6 +88,7 @@ function listeInfoEntre()
         }
         return $row;
     } catch (PDOException $e) {
+        error_log($e->getMessage());
         return null;
     }
 }
@@ -115,6 +119,25 @@ function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie) :bool {
             ':dateSortie'   => $dateSortie,
         ]);
     } catch (PDOException $e) {
+        error_log($e->getMessage());
         return false;
+    }
+}
+
+function listeInfoSortie()
+{
+    global $pdo;
+    try {
+        $sql = "SELECT * FROM sortie";
+        $result = $pdo->prepare($sql);
+        $result->execute();
+        $row = $result->fetchAll(PDO::FETCH_ASSOC);
+        if ($row === false) {
+            return null;
+        }
+        return $row;
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        return null;
     }
 }

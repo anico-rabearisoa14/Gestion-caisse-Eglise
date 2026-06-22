@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $design = $_POST['Design'];
     $result = createEglise($id, $design, 10000);
 }
+$formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <ul class="info-liste">
                 <li><b>ID : </b> <?php echo htmlspecialchars($info['ideglise']) ?></li>
                 <li><b>Design:</b> <?php echo htmlspecialchars($info['Design']) ?></li>
-                <li><b>Solde:</b> <?php echo htmlspecialchars($info['Solde']) ?><span> Ar</span></li>
+                <li><b>Solde:</b> <?php echo htmlspecialchars($formatter->formatCurrency($info['Solde'], 'MGA')) ?><span></span></li>
+                <!-- $formatter->formatCurrency($d['montantEntre'], 'MGA') -->
             </ul>
         </div>
     </div>

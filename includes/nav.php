@@ -8,7 +8,7 @@ function navClass($page, $currentPage) {
 ?>
 <nav>
     <a href="index" class="<?php echo navClass('index', $currentPage); ?>">Acceuil</a>
-    <a href="about" class="<?php echo navClass('about', $currentPage); ?>">About</a>
-    <a href="services" class="<?php echo navClass('services', $currentPage); ?>">Services</a>
-    <a href="contact" class="<?php echo navClass('contact', $currentPage); ?>">Contact</a>
+    <a href="Encaisser" class="<?php echo navClass('Encaisser', $currentPage); ?>">Encaisser</a>
+    <a href="Decaisser" class="<?php echo navClass('Decaisser', $currentPage); ?>">Decaisser</a>
+    <a href="Bilan" class="<?php echo navClass('Bilan', $currentPage); ?>">Bilan</a>
 </nav>
