@@ -71,6 +71,24 @@ function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
     }
 }
 
+// Lister toute les enregistrements
+function listeInfoEntre()
+{
+    global $pdo;
+    try {
+        $sql = "SELECT * FROM entre";
+        $result = $pdo->prepare($sql);
+        $result->execute();
+        $row = $result->fetchAll(PDO::FETCH_ASSOC);
+        if ($row === false) {
+            return null;
+        }
+        return $row;
+    } catch (PDOException $e) {
+        return null;
+    }
+}
+
 // SORTIE
 
 // CREATE TABLE SORTIE (
@@ -84,4 +102,19 @@ function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
 
 
 // ajout d'une enregistrement dans la SORTIE ()
-function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie) {}
+function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie) :bool {
+    global $pdo;
+    try {
+        $sql = "INSERT INTO sortie (ideglise, motif, montantSortie, dateSortie)
+                VALUES (:ideglise, :motif, :montantSortie, :dateSortie)";
+        $result = $pdo->prepare($sql);
+        return $result->execute([
+            ':ideglise'    => $ideglise,
+            ':motif'       => $motif,
+            ':montantSortie' => $montantSortie,
+            ':dateSortie'   => $dateSortie,
+        ]);
+    } catch (PDOException $e) {
+        return false;
+    }
+}

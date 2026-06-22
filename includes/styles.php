@@ -93,6 +93,11 @@
 
     /* Button styles */
     button {
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .submit-btn {
         padding: 10px;
         color: white;
         border: none;
@@ -102,7 +107,7 @@
         background-color: #3498db;
     }
 
-    button:hover {
+    .submit-btn:hover {
         background-color: #2980b9;
     }
 
@@ -111,6 +116,42 @@
         font-weight: bold;
         background-color: #3498db;
         margin-top: 10px;
+    }
+
+    .close-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: #cf1d1d;
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 2px 2px 6px #272626e1;
+
+    }
+
+    .close-btn:hover {
+        background-color: #bd2929;
+        transform: scale(.85);
+        /* transform: rotate(20deg); */
+    }
+
+
+    .normal-btn {
+        padding: 6px;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        background-color: #3498db;
+    }
+
+    .normal-btn:hover {
+        background-color: #2980b9;
     }
 
     /* style for titles  */
@@ -128,7 +169,63 @@
         font-size: 1rem;
     }
 
-    hr{
+    hr {
         margin-bottom: 25px;
+        height: 3px;
+        border: none;
+        border-radius: 9px;
+        background-color: #2c3e50;
+        /* #2980b9; */
+    }
+
+    h4 {
+        margin-top: 0;
+    }
+
+    /* modal class */
+    .centered-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        /* Centers horizontally */
+        align-items: center;
+        /* Centers vertically */
+        background: rgba(0, 0, 0, 0.53);
+        transition: all 4s ease-in-out;
+    }
+
+    .window-decoration {
+        display: flex;
+        justify-content: flex-end;
+        border: 1px soilid;
+    }
+
+
+    /* styles for all the tables */
+    .data-table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 1050px;
+        margin: 5px auto;
+    }
+
+    .data-table th {
+        color: #ecf0f1;
+        background-color: #2c3e50;
+    }
+
+    .data-table tbody tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .data-table tr{
+        text-align: center;
+    }
+    .table-index{
+        width: 100px;
     }
 </style>

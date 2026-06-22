@@ -8,12 +8,13 @@
   }
 
   .wrapper {
+    background-color: white;
     margin: 30px auto;
     padding: 8px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.21);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.37);
     max-width: 400px;
-    min-width: 200px;
+    min-width: 400px;
     margin-left: auto;
     margin-right: auto;
   }
