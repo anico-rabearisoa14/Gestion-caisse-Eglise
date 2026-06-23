@@ -9,39 +9,81 @@ require __DIR__ . '/../db/databasehelper.php';
 //     Solde INT DEFAULT 0
 // );
 
-// creer une eglise
 function createEglise($ideglise, $Design, $Solde): bool
 {
     global $pdo;
     try {
-        $sql = "INSERT INTO eglise(ideglise, Design, Solde) VALUES (:id ,:design ,:solde)";
-        $result = $pdo->prepare($sql);
-        $result->execute([':id' => $ideglise, ':design' => $Design, ':solde' => $Solde]);
-        return true;
+        $sql = "INSERT INTO eglise(ideglise, Design, Solde) VALUES (:id, :design, :solde)";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([':id' => $ideglise, ':design' => $Design, ':solde' => $Solde]);
     } catch (PDOException $e) {
         error_log($e->getMessage());
         return false;
     }
 }
 
-// afficher lse informations d'une eglise
-function listeInfoEglise(): ?array
+function listeInfoEglise() : ?array
 {
     global $pdo;
     try {
         $sql = "SELECT * FROM eglise";
-        $result = $pdo->prepare($sql);
-        $result->execute();
-        $row = $result->fetch(PDO::FETCH_ASSOC);
-        if ($row === false) {
-            return null;
-        }
-        return $row;
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $rows ?: null;
     } catch (PDOException $e) {
         error_log($e->getMessage());
-        return null;
+        return [];
     }
 }
+
+function misAJourEglise($ideglise, $Design, $Solde): array
+{
+    global $pdo;
+    try {
+        $sql = 'UPDATE eglise
+                SET Design = :design,
+                    Solde  = :solde
+                WHERE ideglise = :id';
+        $stmt = $pdo->prepare($sql);
+        if (!$stmt->execute([':id' => $ideglise, ':design' => $Design, ':solde' => $Solde])) {
+            return ['success' => false, 'message' => 'Erreur de mise à jour'];
+        }
+        if ($stmt->rowCount() === 0) {
+            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+        }
+        return ['success' => true, 'message' => 'Mise à jour réussie'];
+    } catch (PDOException $e) {
+        return ['success' => false, 'message' => 'Erreur de mise à jour : ' . $e->getMessage()];
+    }
+}
+
+function supprimerEglise($ideglise): array
+{
+    global $pdo;
+    try {
+        $sql = 'DELETE FROM eglise WHERE ideglise = :id';
+        $stmt = $pdo->prepare($sql);
+        if (!$stmt->execute([':id' => $ideglise])) {
+            return ['success' => false, 'message' => 'Erreur de suppression'];
+        }
+        if ($stmt->rowCount() === 0) {
+            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+        }
+        return ['success' => true, 'message' => 'Suppression réussie'];
+    } catch (PDOException $e) {
+        return ['success' => false, 'message' => 'Erreur de suppression : ' . $e->getMessage()];
+    }
+}
+
+function searchEglise(string $query): array
+{
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM eglise WHERE Design LIKE :query");
+    $stmt->execute([':query' => '%' . $query . '%']);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
 // ENTRE
 
@@ -54,19 +96,20 @@ function listeInfoEglise(): ?array
 //     FOREIGN KEY (ideglise) REFERENCES EGLISE(ideglise)
 // )
 
-// ajout d'une enregistrement dans l'ENTRE ()
+
+ // creer une nouvelle enregistrement
 function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
 {
     global $pdo;
     try {
         $sql = "INSERT INTO entre (ideglise, motif, montantEntre, dateEntre)
                 VALUES (:ideglise, :motif, :montantEntre, :dateEntre)";
-        $result = $pdo->prepare($sql);
-        return $result->execute([
-            ':ideglise'    => $ideglise,
-            ':motif'       => $motif,
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([
+            ':ideglise'     => $ideglise,
+            ':motif'        => $motif,
             ':montantEntre' => $montantEntre,
-            ':dateEntre'   => $dateEntre,
+            ':dateEntre'    => $dateEntre,
         ]);
     } catch (PDOException $e) {
         error_log($e->getMessage());
@@ -74,38 +117,85 @@ function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
     }
 }
 
-// Lister toute les enregistrements
-function listeInfoEntre()
+
+ // lister tous les enregistrements
+function listeInfoEntre(): ?array
 {
     global $pdo;
     try {
         $sql = "SELECT * FROM entre";
-        $result = $pdo->prepare($sql);
-        $result->execute();
-        $row = $result->fetchAll(PDO::FETCH_ASSOC);
-        if ($row === false) {
-            return null;
-        }
-        return $row;
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $rows ?: null;
     } catch (PDOException $e) {
         error_log($e->getMessage());
         return null;
     }
 }
 
+
+ // mettre a jour
+function misAJourEntre($id, $ideglise, $motif, $montantEntre, $dateEntre): array
+{
+    global $pdo;
+    try {
+        $sql = 'UPDATE entre
+                SET ideglise     = :ideglise,
+                    motif        = :motif,
+                    montantEntre = :montantEntre,
+                    dateEntre    = :dateEntre
+                WHERE identre = :id';
+        $stmt = $pdo->prepare($sql);
+        if (!$stmt->execute([
+            ':id'           => $id,
+            ':ideglise'     => $ideglise,
+            ':motif'        => $motif,
+            ':montantEntre' => $montantEntre,
+            ':dateEntre'    => $dateEntre,
+        ])) {
+            return ['success' => false, 'message' => 'Erreur de mise à jour'];
+        }
+        if ($stmt->rowCount() === 0) {
+            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+        }
+        return ['success' => true, 'message' => 'Mise à jour réussie'];
+    } catch (PDOException $e) {
+        return ['success' => false, 'message' => 'Erreur de mise à jour : ' . $e->getMessage()];
+    }
+}
+
+// supprimer
+function supprimerEntre($id): array
+{
+    global $pdo;
+    try {
+        $sql = 'DELETE FROM entre WHERE identre = :id';
+        $stmt = $pdo->prepare($sql);
+        if (!$stmt->execute([':id' => $id])) {
+            return ['success' => false, 'message' => 'Erreur de suppression'];
+        }
+        if ($stmt->rowCount() === 0) {
+            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+        }
+        return ['success' => true, 'message' => 'Suppression réussie'];
+    } catch (PDOException $e) {
+        return ['success' => false, 'message' => 'Erreur de suppression : ' . $e->getMessage()];
+    }
+}
+
+ // recherche d'une enregistrement
 function searchEntre(string $query, string $category): array
 {
     global $pdo;
     $allowed = ['motif', 'montantEntre', 'dateEntre', 'ideglise'];
     if (!in_array($category, $allowed)) $category = 'motif';
 
-    $stmt = $pdo->prepare("
-        SELECT * FROM ENTRE 
-        WHERE $category LIKE :query
-    ");
+    $stmt = $pdo->prepare("SELECT * FROM entre WHERE $category LIKE :query");
     $stmt->execute([':query' => '%' . $query . '%']);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 // SORTIE
 
@@ -119,18 +209,19 @@ function searchEntre(string $query, string $category): array
 // );
 
 
-// ajout d'une enregistrement dans la SORTIE ()
-function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie) :bool {
+ // creer une nouvelle enregistrement
+function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie): bool
+{
     global $pdo;
     try {
         $sql = "INSERT INTO sortie (ideglise, motif, montantSortie, dateSortie)
                 VALUES (:ideglise, :motif, :montantSortie, :dateSortie)";
-        $result = $pdo->prepare($sql);
-        return $result->execute([
-            ':ideglise'    => $ideglise,
-            ':motif'       => $motif,
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([
+            ':ideglise'      => $ideglise,
+            ':motif'         => $motif,
             ':montantSortie' => $montantSortie,
-            ':dateSortie'   => $dateSortie,
+            ':dateSortie'    => $dateSortie,
         ]);
     } catch (PDOException $e) {
         error_log($e->getMessage());
@@ -138,36 +229,80 @@ function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie) :bool {
     }
 }
 
-
-// lister tous les enregistrements
-function listeInfoSortie()
+ // lire tous
+function listeInfoSortie(): ?array
 {
     global $pdo;
     try {
         $sql = "SELECT * FROM sortie";
-        $result = $pdo->prepare($sql);
-        $result->execute();
-        $row = $result->fetchAll(PDO::FETCH_ASSOC);
-        if ($row === false) {
-            return null;
-        }
-        return $row;
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $rows ?: null;
     } catch (PDOException $e) {
         error_log($e->getMessage());
         return null;
     }
 }
+ 
+ // mis ajour
+function misAJourSortie($id, $ideglise, $motif, $montantSortie, $dateSortie): array
+{
+    global $pdo;
+    try {
+        $sql = 'UPDATE sortie
+                SET ideglise      = :ideglise,
+                    motif         = :motif,
+                    montantSortie = :montantSortie,
+                    dateSortie    = :dateSortie
+                WHERE idsortie = :id';
+        $stmt = $pdo->prepare($sql);
+        if (!$stmt->execute([
+            ':id'            => $id,
+            ':ideglise'      => $ideglise,
+            ':motif'         => $motif,
+            ':montantSortie' => $montantSortie,
+            ':dateSortie'    => $dateSortie,
+        ])) {
+            return ['success' => false, 'message' => 'Erreur de mise à jour'];
+        }
+        if ($stmt->rowCount() === 0) {
+            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+        }
+        return ['success' => true, 'message' => 'Mise à jour réussie'];
+    } catch (PDOException $e) {
+        return ['success' => false, 'message' => 'Erreur de mise à jour : ' . $e->getMessage()];
+    }
+}
 
+ // supprimer une sortie
+function supprimerSortie($id): array
+{
+    global $pdo;
+    try {
+        $sql = 'DELETE FROM sortie WHERE idsortie = :id';
+        $stmt = $pdo->prepare($sql);
+        if (!$stmt->execute([':id' => $id])) {
+            return ['success' => false, 'message' => 'Erreur de suppression'];
+        }
+        if ($stmt->rowCount() === 0) {
+            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+        }
+        return ['success' => true, 'message' => 'Suppression réussie'];
+    } catch (PDOException $e) {
+        return ['success' => false, 'message' => 'Erreur de suppression : ' . $e->getMessage()];
+    }
+}
+
+
+// recherche d'une enregistrement
 function searchSortie(string $query, string $category): array
 {
     global $pdo;
     $allowed = ['motif', 'montantSortie', 'dateSortie', 'ideglise'];
     if (!in_array($category, $allowed)) $category = 'motif';
 
-    $stmt = $pdo->prepare("
-        SELECT * FROM SORTIE 
-        WHERE $category LIKE :query
-    ");
+    $stmt = $pdo->prepare("SELECT * FROM sortie WHERE $category LIKE :query");
     $stmt->execute([':query' => '%' . $query . '%']);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

@@ -44,7 +44,7 @@ document.getElementById('data-table').addEventListener('click', function (e) {
         //show the pop-up
         document.getElementById('pop-up-form').style.display = '';
         const form = document.querySelector('.form-container');
-        form.method = "UPDATE";
+        form.method = 'POST';
 
         // select all value on the row
         const cells = row.querySelectorAll('td');
@@ -58,6 +58,7 @@ document.getElementById('data-table').addEventListener('click', function (e) {
         const date = dateRaw.trim();
 
         // paste values in the form
+        document.getElementsByName('id-record')[0].value = 666;
         document.getElementsByName('ideglise')[0].value = ideglise;
         document.getElementsByName('motif')[0].value = motif;
         document.getElementsByName('montant')[0].value = Number(montant);

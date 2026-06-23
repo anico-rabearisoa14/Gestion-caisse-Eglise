@@ -12,7 +12,6 @@
         line-height: 1.6;
     }
 
-
     nav {
         background-color: #2c3e50;
         /* #34495e; */

@@ -15,6 +15,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] == 'UPDATE') {
+    
+    $id = $_POST['ideglise'];
+    $motif = $_POST['motif'];
+    $montant = $_POST['montantSortie'];
+    $date = $_POST['dateSortie'];
+    $res = ajouterSortie($id, $motif, $montant, $date);
+    if ($res) {
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
+}
+
 $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
 // handle search option
 $query = '';
@@ -113,18 +126,20 @@ if (isset($_SESSION['search_results'])) {
             </div>
             <h4 class="form-title">Completer le formulaire</h4>
             <hr>
-            <form class="form-container" method="POST" action="">
+            <form class="form-container" method="POST" action="" autocomplete="off">
+
+                <input type="number" id="id-record" name="id-record">
                 <label for="ideglise">ID Eglise</label>
-                <input type="text" name="ideglise" value="Eg-34383" readonly>
+                <input type="text" name="ideglise" value="Eg-34383">
 
                 <label for="motif">Motif du decaissement</label>
                 <input type="text" name="motif" required>
 
-                <label for="montantEntre">Montant a retirer</label>
-                <input type="number" name="montantSortie" required>
+                <label for="montant">Montant a retirer</label>
+                <input type="number" name="montant" required>
 
-                <label for="dateEntre">Date d'operation</label>
-                <input id="today-date" type="date" name="dateSortie">
+                <label for="date-opertaion">Date d'operation</label>
+                <input id="today-date" type="date" name="date-operation">
 
                 <button class="submit-btn" type="submit">Enregistrer</button>
             </form>

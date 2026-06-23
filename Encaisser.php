@@ -115,7 +115,10 @@ if (isset($_SESSION['search_results'])) {
             </div>
             <h4 class="form-title">Completer le formulaire</h4>
             <hr>
-            <form class="form-container" method="POST" action="">
+            <form class="form-container" method="POST" action="" autocomplete="off">
+
+                <input type="number" id="id-record" name ="id-record">
+
                 <label for="ideglise">ID Eglise</label>
                 <input type="text" name="ideglise" value="Eg-34383" readonly>
 
