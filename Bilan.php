@@ -1,5 +1,5 @@
 <?php
-
+require __DIR__ . '/init.php';
 $pageTitle = "Contact - My PHP Project";
 $successMessage = "";
 

@@ -1,30 +1,36 @@
 <?php
-session_start();
+require __DIR__ . '/init.php';
 include_once 'crud/eglise.php';
 $pageTitle = "Decaissement";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = $_POST['ideglise'];
-    $motif = $_POST['motif'];
-    $montant = $_POST['montantSortie'];
-    $date = $_POST['dateSortie'];
-    $res = ajouterSortie($id, $motif, $montant, $date);
-    if ($res) {
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit();
-    }
-}
+    $method = $_POST['_method'] ?? 'POST';
 
-if ($_SERVER['REQUEST_METHOD'] == 'UPDATE') {
-    
-    $id = $_POST['ideglise'];
-    $motif = $_POST['motif'];
-    $montant = $_POST['montantSortie'];
-    $date = $_POST['dateSortie'];
-    $res = ajouterSortie($id, $motif, $montant, $date);
-    if ($res) {
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit();
+    if ($method === 'UPDATE') {
+        // Handle UPDATE
+        $id       = $_POST['id-record'];
+        $ideglise = $_POST['ideglise'];
+        $motif    = $_POST['motif'];
+        $montant  = $_POST['montant'];
+        $date     = $_POST['date-operation'];
+
+        $res = misAJourSortie($id, $ideglise, $motif, $montant, $date);
+        if ($res['success']) {
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
+        }
+    } else {
+        // Handle POST (insert)
+        $id     = $_POST['ideglise'];
+        $motif  = $_POST['motif'];
+        $montant = $_POST['montant'];
+        $date   = $_POST['date-operation'];
+
+        $res = ajouterSortie($id, $motif, $montant, $date);
+        if ($res) {
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
+        }
     }
 }
 
@@ -61,7 +67,7 @@ if (isset($_SESSION['search_results'])) {
         <h1>Liste des decaissements</h1>
         <div class="button-container">
 
-            <form class="search-bar" method="GET" action="crud/search.php">
+            <form class="search-bar" method="GET" action="crud/search.php" autocomplete="off">
                 <input type="hidden" name="table" value="sortie">
                 <input type="text" placeholder="Rechercher..." name="query"
                     value="<?= htmlspecialchars($query ?? '') ?>">
@@ -96,25 +102,31 @@ if (isset($_SESSION['search_results'])) {
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($data as $d): ?>
-                <tr id="<?php echo htmlspecialchars($d['idsortie']) ?>">
+            <?php if ($data): ?>
+                <?php foreach ($data as $d): ?>
+                    <tr id="<?php echo htmlspecialchars($d['idsortie']) ?>">
 
-                    <td><?php echo htmlspecialchars($d['idsortie']) ?></td>
-                    <td><?php echo htmlspecialchars($d['ideglise']) ?></td>
-                    <td><?php echo htmlspecialchars($d['motif']) ?></td>
-                    <td style="text-align: end;">
-                        <?php echo htmlspecialchars($formatter->formatCurrency($d['montantSortie'], 'MGA')); ?></td>
-                    <td><?php echo htmlspecialchars($d['dateSortie']) ?></td>
-                    <td class="action-cell">
-                        <button class="btn-update" title="Modifier">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="btn-delete" title="Supprimer">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </td>
+                        <td><?php echo htmlspecialchars($d['idsortie']) ?></td>
+                        <td><?php echo htmlspecialchars($d['ideglise']) ?></td>
+                        <td><?php echo htmlspecialchars($d['motif']) ?></td>
+                        <td style="text-align: end;">
+                            <?php echo htmlspecialchars($formatter->formatCurrency($d['montantSortie'], 'MGA')); ?></td>
+                        <td><?php echo htmlspecialchars($d['dateSortie']) ?></td>
+                        <td class="action-cell">
+                            <button class="btn-update" title="Modifier">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="btn-delete" title="Supprimer">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="6" style="text-align: center;">Aucune donnée disponible</td>
                 </tr>
-            <?php endforeach; ?>
+            <?php endif; ?>
         </tbody>
     </table>
     <div id="pop-up-form" class="centered-modal" style="display: none;">
@@ -128,9 +140,10 @@ if (isset($_SESSION['search_results'])) {
             <hr>
             <form class="form-container" method="POST" action="" autocomplete="off">
 
+                <input id="_method" type="text" name="_method">
                 <input type="number" id="id-record" name="id-record">
                 <label for="ideglise">ID Eglise</label>
-                <input type="text" name="ideglise" value="Eg-34383">
+                <input type="text" name="ideglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>">
 
                 <label for="motif">Motif du decaissement</label>
                 <input type="text" name="motif" required>
@@ -146,7 +159,20 @@ if (isset($_SESSION['search_results'])) {
         </div>
     </div>
 
+ <!-- confirmation prompt avant supprimer -->
+    <div id="pop-up-confirm" class="centered-modal" style="display: none;">
+        <div class="wrapper">
+            <div class="action-title">Etes vous sur de supprimer ?</div>
+            <div class="button-layout">
+                <button class="accept-btn">Oui</button>
+                <button class="refus-btn">Non</button>
+            </div>
+        </div>
+    </div>
 
+<div class="message-box success-box">
+  <p class="message-success">Suppression reussie</p>
+</div>
 
     <footer>
         &copy; <?php echo date("Y"); ?> My PHP Project. All rights reserved.

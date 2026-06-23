@@ -1,6 +1,8 @@
 <?php
 require __DIR__ . '/../db/databasehelper.php';
+require __DIR__ . '/../init.php';
 
+// listeInfoEglise();
 // EGLISE
 
 // CREATE TABLE EGLISE (
@@ -30,6 +32,7 @@ function listeInfoEglise() : ?array
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+        $_SESSION['ID_EGLISE'] = $rows['ideglise'];
         return $rows ?: null;
     } catch (PDOException $e) {
         error_log($e->getMessage());

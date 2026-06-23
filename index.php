@@ -1,6 +1,5 @@
 <?php
-$pageTitle = "Veuillez entrer les informations de votre Eglise";
-$welcomeMessage = "Biienvenu !";
+require __DIR__ . '/init.php';
 $currentDate = date("F j, Y");
 $projectName = 'GestionEglise';
 
@@ -35,22 +34,28 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
 
     <?php include 'includes/nav.php'; ?>
     <header>
-        <h1><?php echo htmlspecialchars($pageTitle); ?></h1>
+        <h1><?php echo htmlspecialchars($contientUne ? 
+        'Les renseignements de votre Eglise' : 'Ajouter une eglise') ?></h1>
     </header>
 
-    <div class="wrapper" style="display: <?php echo htmlspecialchars($contientUne ? 'none' : 'block') ?>;">
+     <!--  afficher le formulaire si il n'y a pas d'eglise -->
+    <div class="wrapper" 
+         style="display: <?php echo htmlspecialchars($contientUne ? 'none' : 'block') ?>;">
         <h4 class="form-title">Completer le form </h4>
         <hr>
-        <!-- should be flex the form on the middle -->
         <form class="form-container" method="POST" action="">
-            <label for="ideglise">ID Eglise</label><input type="text" name="ideglise" required>
-            <label for="Design">Designation</label><input type="text" name="Design" required>
+            <label for="ideglise">ID Eglise</label>
+            <input type="text" name="ideglise" required>
+            <label for="Design">Designation</label>
+            <input type="text" name="Design" required>
             <button class="submit-btn" type="submit">Ajouter</button>
         </form>
     </div>
     </div>
 
-    <div class="wrapper" style="display: <?php echo htmlspecialchars($contientUne ? 'block' : 'none') ?>;">
+     <!-- sinon afficher les infos a propos de l'eglise -->
+    <div class="wrapper"
+         style="display: <?php echo htmlspecialchars($contientUne ? 'block' : 'none') ?>;">
         <h4 class="form-title">Informations sur l'Eglise </h4>
         <hr>
         <div class="form-container">
@@ -58,7 +63,6 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
                 <li><b>ID : </b> <?php echo htmlspecialchars($info['ideglise']) ?></li>
                 <li><b>Design:</b> <?php echo htmlspecialchars($info['Design']) ?></li>
                 <li><b>Solde:</b> <?php echo htmlspecialchars($formatter->formatCurrency($info['Solde'], 'MGA')) ?><span></span></li>
-                <!-- $formatter->formatCurrency($d['montantEntre'], 'MGA') -->
             </ul>
         </div>
     </div>

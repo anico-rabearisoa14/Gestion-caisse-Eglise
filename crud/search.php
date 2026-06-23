@@ -1,5 +1,4 @@
 <?php
-session_start();
 require __DIR__ . '/../db/databasehelper.php';
 require __DIR__ . '/../crud/eglise.php';
 

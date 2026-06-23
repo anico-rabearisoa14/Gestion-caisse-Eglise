@@ -1,29 +1,45 @@
 // set today's date on the date inputs
-document.addEventListener("DOMContentLoaded", () => {
-    const dateInput = document.getElementById("today-date");
-    const today = new Date();
-    // Extract components
-    const year = today.getFullYear();
-    // getMonth() returns 0-11, so add 1
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+function adjustDate() {
+    // document.addEventListener("DOMContentLoaded", () => {
+        const dateInput = document.getElementById("today-date");
+        const today = new Date();
+        // Extract components
+        const year = today.getFullYear();
+        // getMonth() returns 0-11, so add 1
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
 
-    // Format as YYYY-MM-DD
-    const formattedDate = `${year}-${month}-${day}`;
+        // Format as YYYY-MM-DD
+        const formattedDate = `${year}-${month}-${day}`;
 
-    // Set the value
-    dateInput.value = formattedDate;
-});
+        // Set the value
+        dateInput.value = formattedDate;
+    // });
+}
+
+ // clear form 
+ function clearForm(){
+    document.getElementById('_method').value = 'POST';
+    document.getElementsByName('id-record')[0].value = '';
+    document.getElementsByName('motif')[0].value = '';
+    document.getElementsByName('montant')[0].value = '';
+    adjustDate();
+ }
+
+adjustDate();
 
 // close the form modal
 const closeBtn = document.getElementById('btn-close');
 closeBtn.addEventListener('click', function () {
     document.getElementById('pop-up-form').style.display = 'none';
+    clearForm();
 });
 
 // show the form modal
 const addButton = document.getElementById('ajout-btn');
 addButton.addEventListener('click', function () {
+    clearForm();
+    document.getElementById('id-record').style.display = 'none';
     document.getElementById('pop-up-form').style.display = '';
 });
 
@@ -40,11 +56,14 @@ document.getElementById('data-table').addEventListener('click', function (e) {
 
     if (target.classList.contains('btn-delete')) {
         console.log('Delete row:', id);
+        document.getElementById('pop-up-confirm').style.display = '';
+        
     } else if (target.classList.contains('btn-update')) {
         //show the pop-up
+        document.getElementById('id-record').style.display = '';
+        document.getElementById('_method').value = 'UPDATE';
         document.getElementById('pop-up-form').style.display = '';
         const form = document.querySelector('.form-container');
-        form.method = 'POST';
 
         // select all value on the row
         const cells = row.querySelectorAll('td');
@@ -58,7 +77,7 @@ document.getElementById('data-table').addEventListener('click', function (e) {
         const date = dateRaw.trim();
 
         // paste values in the form
-        document.getElementsByName('id-record')[0].value = 666;
+        document.getElementsByName('id-record')[0].value = id;
         document.getElementsByName('ideglise')[0].value = ideglise;
         document.getElementsByName('motif')[0].value = motif;
         document.getElementsByName('montant')[0].value = Number(montant);
