@@ -89,7 +89,7 @@ if (isset($_SESSION['search_results'])) {
         </div>
     </header>
 
-
+<!-- lister toutes le records dans la base de donne -->
     <table id="data-table" border="1" class="data-table">
         <thead style="position: sticky; top:173px">
             <tr>
@@ -129,6 +129,8 @@ if (isset($_SESSION['search_results'])) {
             <?php endif; ?>
         </tbody>
     </table>
+
+    <!-- ajouter nouveau record -->
     <div id="pop-up-form" class="centered-modal" style="display: none;">
         <div class="wrapper">
             <div class="window-decoration">
@@ -140,8 +142,8 @@ if (isset($_SESSION['search_results'])) {
             <hr>
             <form class="form-container" method="POST" action="" autocomplete="off">
 
-                <input id="_method" type="text" name="_method">
-                <input type="number" id="id-record" name="id-record">
+                <input id="_method" type="hidden" name="_method">
+                <input type="hidden" id="id-record" name="id-record">
                 <label for="ideglise">ID Eglise</label>
                 <input type="text" name="ideglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>">
 
@@ -164,9 +166,10 @@ if (isset($_SESSION['search_results'])) {
         <div class="wrapper">
             <div class="action-title">Etes vous sur de supprimer ?</div>
             <div class="button-layout">
-                <button class="accept-btn">Oui</button>
-                <button class="refus-btn">Non</button>
+                <button id="acceptBtn" class="accept-btn">Oui</button>
+                <button id="refusBtn" class="refus-btn">Non</button>
             </div>
+            <!-- <p style="font-size:small">Remarque le solde total sera ajuster apres</p> -->
         </div>
     </div>
 

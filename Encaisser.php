@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/init.php';
 include_once 'crud/eglise.php';
 $pageTitle = "Encaissement";
 
@@ -56,16 +57,15 @@ if (isset($_SESSION['search_results'])) {
     <?php include_once 'includes/formStyle.php'; ?>
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 </head>
 
 <body>
 
+    <!-- navigation et en tete de page -->
     <?php include 'includes/nav.php'; ?>
     <header>
         <h1>Liste des ecaissements</h1>
         <div class="button-container">
-
             <form class="search-bar" method="GET" action="crud/search.php" autocomplete="off">
                 <input type="hidden" name="table" value="entre">
                 <input type="text" placeholder="Rechercher..." name="query"
@@ -88,7 +88,7 @@ if (isset($_SESSION['search_results'])) {
         </div>
     </header>
 
-    <!-- Table to show all records on the ENTRE table -->
+    <!-- Listes de tous les enregistrements -->
     <table id="data-table" border="1" class="data-table">
         <thead style="position: sticky; top:173px">
             <tr>
@@ -101,6 +101,7 @@ if (isset($_SESSION['search_results'])) {
             </tr>
         </thead>
         <tbody>
+
             <?php if ($data): ?>
                 <?php foreach ($data as $d): ?>
                     <tr id="<?php echo htmlspecialchars($d['identre']) ?>">
@@ -129,6 +130,7 @@ if (isset($_SESSION['search_results'])) {
         </tbody>
     </table>
 
+    <!--  formulaire d'ajout de nouvelle enregistrement  -->
     <div id="pop-up-form" class="centered-modal" style="display: none;">
         <div class="wrapper">
             <div class="window-decoration">
@@ -140,9 +142,8 @@ if (isset($_SESSION['search_results'])) {
             <hr>
             <form class="form-container" method="POST" action="" autocomplete="off">
 
-                <input id="_method" type="text" name="_method">
-                <input type="number" id="id-record" name="id-record">
-                <!-- _method -->
+                <input id="_method" type="hidden" name="_method">
+                <input type="hidden" id="id-record" name="id-record">
                 <label for="ideglise">ID Eglise</label>
                 <input type="text" name="ideglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" readonly>
 
@@ -163,17 +164,18 @@ if (isset($_SESSION['search_results'])) {
 
     <!-- confirmation prompt avant supprimer -->
     <div id="pop-up-confirm" class="centered-modal" style="display: none;">
-        <div class="prompt-box">
+        <div class="wrapper">
             <div class="action-title">Etes vous sur de supprimer</div>
             <div class="button-layout">
-                <button class="accept-btn">Oui</button>
-                <button class="refus-btn">Non</button>
+                <button id="acceptBtn" class="accept-btn">Oui</button>
+                <button id="refusBtn" class="refus-btn">Non</button>
             </div>
         </div>
     </div>
 
+    <!-- message feed-back apres chaque operation -->
     <div class="message-box success-box">
-        <p class="message-success">Suppression reussie</p>
+        <p class="message-success">Message</p>
     </div>
 
     <footer>

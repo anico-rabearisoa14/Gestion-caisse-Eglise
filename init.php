@@ -1,6 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
-    $_SESSION['STAT'] = 'yes';
+    require __DIR__ . '/crud/eglise.php';
+    listeInfoEglise();
 }
 ?>

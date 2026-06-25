@@ -87,3 +87,11 @@ document.getElementById('data-table').addEventListener('click', function (e) {
 
     }
 });
+
+// handle prompt buttons
+const acceptBtn = document.getElementById('acceptBtn');
+const refusBtn = document.getElementById('refusBtn');
+
+refusBtn.addEventListener('click' , function(){
+document.getElementById('pop-up-confirm').style.display = 'none';
+});

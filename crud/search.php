@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../db/databasehelper.php';
-require __DIR__ . '/../crud/eglise.php';
+require __DIR__ . '/../init.php';
 
 $query    = trim($_GET['query'] ?? '');
 $category = trim($_GET['category'] ?? 'motif');

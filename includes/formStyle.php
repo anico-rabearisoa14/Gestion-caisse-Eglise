@@ -67,6 +67,8 @@
 .action-title{
   font-size: 1rem;
   font-weight: bolder;
+  justify-self: center;
+  margin-bottom: 10px;
 }
 
 .prompt-box{
@@ -76,6 +78,7 @@
   background-color: rgb(255, 255, 255);
   padding: 10px;
   border-radius: 8px;
+  width: 400px;
 }
 
 .button-layout{
@@ -89,16 +92,23 @@
   padding: 3px 8px;
   color: white;
   border: none;
+  font-size: 1rem;
   border-radius: 4px;
   width: 100%;
   max-width: 100px;
 }
 
 .accept-btn{
-  background-color: green;
+  background-color: #cf1d1d;
+}
+.accept-btn:hover{
+  background-color: #b11818;
+}
+.refus-btn{
+  background-color: #3498dbc0;
 }
 
-.refus-btn{
-  background-color: rgb(128, 15, 0);
+.refus-btn:hover{
+  background-color: #237cb8d0;
 }
 </style>

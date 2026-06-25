@@ -2,6 +2,7 @@
 require __DIR__ . '/init.php';
 $currentDate = date("F j, Y");
 $projectName = 'GestionEglise';
+$pageTitle = 'Acceuil';
 
 // check if there is an Eglise
 require_once 'crud/eglise.php';

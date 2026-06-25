@@ -97,7 +97,7 @@
     }
 
 
-    /* Button styles */
+    /* Buttons styles */
     button {
         cursor: pointer;
         transition: all 0.3s ease-in-out;
@@ -134,7 +134,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 2px 2px 6px #27262669;
+        /* box-shadow: 2px 2px 6px #27262669; */
 
     }
 
@@ -269,8 +269,8 @@
         border: none;
         padding: 8px 12px;
         cursor: pointer;
-        border-top-right-radius:6px;
-        border-bottom-right-radius:6px;
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
         margin-right: 2px;
     }
 
@@ -307,5 +307,19 @@
         border: none;
         cursor: pointer;
         font-size: 16px;
+    }
+
+
+
+    /* input styling */
+    input:active {
+        border-color: #3b4a6b;
+    }
+
+    .centered-modal input:focus {
+        outline: none;
+        border: 1px solid #3b4a6b;
+        background-color: #3b4a6b10;
+        border-color: #3b4a6b;
     }
 </style>
