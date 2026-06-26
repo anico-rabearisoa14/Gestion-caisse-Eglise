@@ -1,137 +1,149 @@
-  <style>
-      form {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          max-width: 400px;
-      }
+<style>
+:root {
+    --text-sm: 0.85rem;   /* table data */
+    --text-base: 1rem;    /* body */
+    --text-lg: 1.25rem;   /* labels */
+    --text-xl: 2rem;      /* page title */
+}
 
-      .success {
-          color: #27ae60;
-          margin-top: 10px;
-      }
+h1 { font-size: var(--text-xl); }
+label { font-size: var(--text-base); }
+td, th { font-size: var(--text-sm); }
+p{ font-size: var(--text-sm);}
 
-      /* the main body of the page */
-      #container {
-          max-width: 900px;
-          margin: 4px auto;
-          padding: 30px;
-          background-color: #ffffff;
-          border-radius: 8px;
-          /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.21); */
-          /* border: 1px solid #3b4a6b; */
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-      }
+#montant-total{
+    font-size: var(--text-sm);
+}
 
-      /*  */
-      .main-form-wrapper {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          gap: 10px;
-          background-color: #ffffff;
-          border: 1px solid #3b4a6b;
-          box-shadow: 0px -5px 0px #3b4a6b, 0px 5px 0px #3b4a6b;
-          /* ,-2px 0px 0px #3b4a6b , 2px 0px 0px #3b4a6b ; */
-          border-radius: 8px;
-          max-width: 435px;
-          padding: 4px 35px;
-      }
+    /* ─── Layout  */
+    #container {
+        max-width: 900px;
+        margin: 4px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
 
-      .input-wrapper {
-          display: flex;
-          justify-content: center;
-          gap: 6px;
-      }
+    @media screen and (max-width: 690px) {
+        #container {
+            flex-direction: column;
+            align-items: stretch;
+        }
 
-      label {
-          color: rgb(7, 67, 131);
-          justify-self: end;
-          font-weight: bold;
-          margin-right: 5px;
-      }
+        .main-form-wrapper {
+            max-width: 100%;
+        }
+    }
 
+    /* ─── Filter Panel  */
+    .main-form-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        background-color: #ffffff;
+        border: 1px solid black;
+        border-left: 4px solid black;
+        border-radius: 12px;
+        max-width: 435px;
+        max-height: 345px;
+        padding: 4px 10px;
+    }
 
-      /* the date input styles */
-      .date-input {
-          display: flex;
-          justify-content: center;
-      }
+    .reponse-filtre {
+        border: 1px solid black;
+        border-right: 4px solid black;
+        border-radius: 12px;
+        padding: 15px;
+    }
 
-      .date-begin {
-          background-color: rgba(23, 153, 185, 0.836);
-          color: white;
-      }
+    /* ─── Form Elements  */
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-width: 400px;
+    }
 
-      .date-end {
-          background-color: rgba(20, 173, 97, 0.89);
-          color: white;
-      }
+    label {
+        color: rgb(7, 67, 131);
+        /* font-weight: bold; */
+        margin-right: 5px;
+    }
 
-      /* select area */
-      select {
-          padding: 8px;
-          border-radius: 6px;
-          color: white;
-          background-color: #3b4a6b;
-      }
+    select {
+        padding: 8px;
+        border-radius: 6px;
+        color: white;
+        background-color: #3b4a6b;
+    }
 
-      #select-area {
-          border-radius: 6px;
-          border: 1px solid #3b4a6b;
-          margin-top: 10px;
-          margin-bottom: 25px;
-          padding: 8px
-      }
+    #select-area {
+        display: flex;
+        min-width: 190px;
+        width: 100%;
+        justify-content: space-between;
+        border: 1px solid #3b4a6b;
+        border-radius: 6px;
+        margin: 10px 0 25px;
+        padding: 4px;
+    }
 
-      /* button style */
-      .button-layout {
-          display: flex;
-          justify-content: center;
-      }
+    .input-wrapper {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+    }
 
-      .state {
-          /* background-color: #3b4a6b; */
-          /* color: white; */
-          /* padding: 3px; */
-          /* border-radius: 3px; */
-          margin-left: 8px;
-          border-bottom: 2px solid #2c3e50;
-          /* box-shadow: 0px 1px 0px #2c3e50; */
-      }
+    .date-input {
+        display: flex;
+        justify-content: center;
+    }
 
-      /* style of the filter response */
-      .reponse-filtre {
-          border-left: 4px solid black;
-          border-right: 1px solid black;
-          border-top: 1px solid black;
-          border-bottom: 1px solid black;
-          border-radius: 12px;
-          padding: 15px;
-          margin-top: 65px;
-      }
+    .date-begin {
+        background-color: white;
+        color: #18233b;
+    }
 
-      /*  style for the table  */
-      .filtered-data-table {
-          border-collapse: collapse;
-          width: 100%;
-          max-width: 1050px;
-          margin: 5px auto;
-      }
+    .date-end {
+        background-color: white;
+        color: #3b4a6b;
+    }
 
-      .filtered-data-table th {
-          color: #ecf0f1;
-          background-color: #2c3e50;
-      }
+    /* ─── Button  */
+    .button-layout {
+        display: flex;
+        justify-content: center;
+    }
 
-      .filtered-data-table tbody tr:nth-child(odd) {
-          background-color: #f2f2f2;
-      }
+    /* ─── Results Table  */
+    .filtered-data-table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 1050px;
+        margin: 5px auto;
+    }
 
-      .filtered-data-table tr {
-          text-align: center;
-      }
-  </style>
+    .filtered-data-table th {
+        color: #ecf0f1;
+        background-color: #2c3e50;
+    }
+
+    .filtered-data-table tbody tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .filtered-data-table tr {
+        text-align: center;
+    }
+
+    /* ─── Feedback  */
+    .success {
+        color: #27ae60;
+        margin-top: 10px;
+    }
+</style>

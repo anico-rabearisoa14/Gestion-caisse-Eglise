@@ -56,6 +56,7 @@ document.getElementById('data-table').addEventListener('click', function (e) {
 
     if (target.classList.contains('btn-delete')) {
         console.log('Delete row:', id);
+        document.getElementsByName('id-to-delete')[0].value = id;
         document.getElementById('pop-up-confirm').style.display = '';
         
     } else if (target.classList.contains('btn-update')) {

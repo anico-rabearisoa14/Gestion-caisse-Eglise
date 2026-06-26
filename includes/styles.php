@@ -4,6 +4,38 @@
         padding: 0;
         box-sizing: border-box;
     }
+/* custom variable */
+    :root {
+        /* font size  */
+        --text-sm: 0.85rem;
+        --text-base: 1rem;
+        --text-lg: 1.25rem;
+        --text-xl: 2rem;
+
+        /* color */
+        --color-primary: #3b4a6b;
+        --color-dark: #2c3e50;
+        --color-text: #18233b;
+        --color-white: #ffffff;
+        --color-bg-odd: #f2f2f2;
+        --color-success: #27ae60;
+        --color-border: black;
+    }
+
+    h1 {
+        font-size: var(--text-xl);
+    }
+
+    label {
+        font-size: var(--text-base);
+        /* color: var(--color-dark); */
+    }
+
+    td,
+    th {
+        font-size: var(--text-sm);
+    }
+
 
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -245,8 +277,6 @@
         max-width: 1050px;
         margin: auto;
     }
-
-
 
     .search-bar {
         display: flex;

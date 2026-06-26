@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/init.php';
-include_once 'crud/eglise.php';
+include_once 'crud/sortie.php';
 $pageTitle = "Decaissement";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -19,7 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
         }
-    } else {
+    } elseif($method == 'DELETE') {
+        $id = $_POST['id-to-delete'];
+        $res = supprimerSortie($id);
+        if($res['success']){
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
+        }
+    }
+    else{
         // Handle POST (insert)
         $id     = $_POST['ideglise'];
         $motif  = $_POST['motif'];
@@ -34,7 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+//  currency formatter
 $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
+
 // handle search option
 $query = '';
 if (isset($_SESSION['search_results'])) {
@@ -53,11 +63,12 @@ if (isset($_SESSION['search_results'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    <?php include 'includes/styles.php'; ?>
-    <?php include_once 'includes/formStyle.php'; ?>
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <?php include 'includes/styles.php'; ?>
+    <?php include_once 'includes/formStyle.php'; ?>
+    
 </head>
 
 <body>
@@ -151,7 +162,7 @@ if (isset($_SESSION['search_results'])) {
                 <input type="text" name="motif" required>
 
                 <label for="montant">Montant a retirer</label>
-                <input type="number" name="montant" required>
+                <input type="number" name="montant" min="10000" required>
 
                 <label for="date-opertaion">Date d'operation</label>
                 <input id="today-date" type="date" name="date-operation">
@@ -162,16 +173,17 @@ if (isset($_SESSION['search_results'])) {
     </div>
 
  <!-- confirmation prompt avant supprimer -->
-    <div id="pop-up-confirm" class="centered-modal" style="display: none;">
+    <form id="pop-up-confirm" method="POST" class="centered-modal" style="display: none;">
         <div class="wrapper">
-            <div class="action-title">Etes vous sur de supprimer ?</div>
+            <div class="action-title">Etes vous sur de supprimer</div>
             <div class="button-layout">
-                <button id="acceptBtn" class="accept-btn">Oui</button>
-                <button id="refusBtn" class="refus-btn">Non</button>
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="id-to-delete">
+                <button type="submit" id="acceptBtn" class="accept-btn">Oui</button>
+                <button type="button" id="refusBtn" class="refus-btn">Non</button>
             </div>
-            <!-- <p style="font-size:small">Remarque le solde total sera ajuster apres</p> -->
         </div>
-    </div>
+    </form>
 
 <div class="message-box success-box">
   <p class="message-success">Suppression reussie</p>

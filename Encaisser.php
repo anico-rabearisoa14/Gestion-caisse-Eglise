@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/init.php';
-include_once 'crud/eglise.php';
+include_once 'crud/entre.php';
 $pageTitle = "Encaissement";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -19,7 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
         }
-    } else {
+    } elseif($method == 'DELETE') {
+    $id = $_POST['id-to-delete'];
+    $res = supprimerEntre($id);
+    if($res){
+        header('Location:' . $_SERVER['PHP_SELF']);
+    }
+    }
+    else{
         // Handle POST (insert)
         $id     = $_POST['ideglise'];
         $motif  = $_POST['motif'];
@@ -151,7 +158,7 @@ if (isset($_SESSION['search_results'])) {
                 <input type="text" name="motif" required>
 
                 <label for="montant">Montant</label>
-                <input type="number" name="montant" required>
+                <input type="number" name="montant" min="10000" required>
 
                 <label for="date-operation">Date</label>
                 <input id="today-date" type="date" name="date-operation">
@@ -163,15 +170,20 @@ if (isset($_SESSION['search_results'])) {
 
 
     <!-- confirmation prompt avant supprimer -->
-    <div id="pop-up-confirm" class="centered-modal" style="display: none;">
+    <form id="pop-up-confirm" method="POST" action="" 
+          class="centered-modal" style="display: none;">
+
         <div class="wrapper">
             <div class="action-title">Etes vous sur de supprimer</div>
             <div class="button-layout">
-                <button id="acceptBtn" class="accept-btn">Oui</button>
-                <button id="refusBtn" class="refus-btn">Non</button>
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="id-to-delete">
+                <button type="submit" id="acceptBtn" class="accept-btn">Oui</button>
+                <button type="button" id="refusBtn" class="refus-btn">Non</button>
             </div>
         </div>
-    </div>
+
+    </form>
 
     <!-- message feed-back apres chaque operation -->
     <div class="message-box success-box">

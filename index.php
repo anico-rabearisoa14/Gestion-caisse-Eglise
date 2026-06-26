@@ -68,6 +68,12 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
         </div>
     </div>
 
+    <!-- <div class="wrapper" style="width: 600px; height:450px">
+<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d120785.52663565999!2d47.546367999999994!3d-18.907135999999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2smg!4v1782460254660!5m2!1sen!2smg" 
+    width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+     referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div> -->
+    
     <footer>
         &copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($projectName); ?>. All rights reserved.
     </footer>
