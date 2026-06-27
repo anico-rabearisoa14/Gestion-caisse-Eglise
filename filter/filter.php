@@ -36,6 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $dateBegin = $_GET['date-begin'] ?? '';
     $dateEnd   = $_GET['date-end']   ?? '';
 
+    $_SESSION['requested-category-to-print'] = $category;
+    $_SESSION['requested-begin-date-to-print'] = $dateBegin;
+    $_SESSION['requested-end-date-to-print'] = $dateEnd;
+
     if (empty($category) || empty($dateBegin) || empty($dateEnd)) {
         $_SESSION['filter-message'] = 'Veuillez remplir tous les champs.';
         header('Location: ../bilan.php');

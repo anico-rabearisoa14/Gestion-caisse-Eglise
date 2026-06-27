@@ -90,8 +90,6 @@
 }
 .button-layout button{
   padding: 3px 8px;
-  color: white;
-  border: none;
   font-size: 1rem;
   border-radius: 4px;
   width: 100%;
@@ -100,15 +98,19 @@
 
 .accept-btn{
   background-color: #cf1d1d;
+  color: white;
+  border: none;
 }
 .accept-btn:hover{
   background-color: #b11818;
 }
 .refus-btn{
-  background-color: #3498dbc0;
+  background-color: #ffffffc5;
+  color: #061535;
+  border: 1px solid #313131b7;
 }
 
 .refus-btn:hover{
-  background-color: #237cb8d0;
+  background-color: #7a7f8373;
 }
 </style>

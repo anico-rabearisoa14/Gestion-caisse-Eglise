@@ -34,6 +34,7 @@ $_category = $_GET['_category'];
 $_date_begin = $_GET['date-to-print-begin'];
 $_date_end = $_GET['date-to-print-end'];
 
+
 switch($_category){
     case 'sortie' :
         $phrase_en_tete = 'Mouvement de sortie de caisse';
@@ -100,5 +101,5 @@ $mpdf = new \Mpdf\Mpdf([
 
 $mpdf->SetHTMLFooter('<p style="text-align:center; font-size:9px; color:#999;">Page {PAGENO} / {nb}</p>');
 $mpdf->WriteHTML($html);
-$mpdf->Output('pdf-' . date('d/m/Y') .'-'. $phrase_en_tete .'-'. $_date_end .'-'. $_date_begin .'.pdf', 'D');
+$mpdf->Output('pdf-' . date('d/m/Y') .'-'. $phrase_en_tete .'-'. $_date_end .'-'. $_date_begin .'.pdf', 'I');
 ?>
