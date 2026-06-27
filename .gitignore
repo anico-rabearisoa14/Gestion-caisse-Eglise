@@ -1,0 +1,12 @@
+# Fonts
+fonts/
+
+# Vendor
+vendor/
+
+# Environment
+.env
+
+# OS
+Thumbs.db
+.DS_Store

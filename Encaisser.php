@@ -62,8 +62,8 @@ if (isset($_SESSION['search_results'])) {
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
     <?php include 'includes/styles.php'; ?>
     <?php include_once 'includes/formStyle.php'; ?>
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="fonts/tabler/dist/tabler-icons-200.min.css"> 
+    <link rel="stylesheet" href="fonts/fa/css/all.min.css">
 </head>
 
 <body>
@@ -97,7 +97,7 @@ if (isset($_SESSION['search_results'])) {
 
     <!-- Listes de tous les enregistrements -->
     <table id="data-table" border="1" class="data-table">
-        <thead style="position: sticky; top:173px">
+        <thead style="position: sticky; top:179px">
             <tr>
                 <th class="table-index">ID Entre</th>
                 <th class="table-index">ID Eglise</th>

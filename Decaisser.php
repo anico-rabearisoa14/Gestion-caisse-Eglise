@@ -3,7 +3,7 @@ require __DIR__ . '/init.php';
 include_once 'crud/sortie.php';
 $pageTitle = "Decaissement";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     $method = $_POST['_method'] ?? 'POST';
 
     if ($method === 'UPDATE') {
@@ -19,15 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
         }
-    } elseif($method == 'DELETE') {
+    } elseif ($method == 'DELETE') {
         $id = $_POST['id-to-delete'];
         $res = supprimerSortie($id);
-        if($res['success']){
+        if ($res['success']) {
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
         }
-    }
-    else{
+    } else {
         // Handle POST (insert)
         $id     = $_POST['ideglise'];
         $motif  = $_POST['motif'];
@@ -63,12 +62,11 @@ if (isset($_SESSION['search_results'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="fonts/tabler/dist/tabler-icons-200.min.css"> 
+    <link rel="stylesheet" href="fonts/fa/css/all.min.css">
     <?php include 'includes/styles.php'; ?>
     <?php include_once 'includes/formStyle.php'; ?>
-    
+
 </head>
 
 <body>
@@ -100,9 +98,9 @@ if (isset($_SESSION['search_results'])) {
         </div>
     </header>
 
-<!-- lister toutes le records dans la base de donne -->
+    <!-- lister toutes le records dans la base de donne -->
     <table id="data-table" border="1" class="data-table">
-        <thead style="position: sticky; top:173px">
+        <thead style="position: sticky; top:179px">
             <tr>
                 <th class="table-index">ID Entre</th>
                 <th class="table-index">ID Eglise</th>
@@ -172,7 +170,7 @@ if (isset($_SESSION['search_results'])) {
         </div>
     </div>
 
- <!-- confirmation prompt avant supprimer -->
+    <!-- confirmation prompt avant supprimer -->
     <form id="pop-up-confirm" method="POST" class="centered-modal" style="display: none;">
         <div class="wrapper">
             <div class="action-title">Etes vous sur de supprimer</div>
@@ -184,10 +182,6 @@ if (isset($_SESSION['search_results'])) {
             </div>
         </div>
     </form>
-
-<div class="message-box success-box">
-  <p class="message-success">Suppression reussie</p>
-</div>
 
     <footer>
         &copy; <?php echo date("Y"); ?> My PHP Project. All rights reserved.

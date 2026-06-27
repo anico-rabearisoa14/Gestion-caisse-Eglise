@@ -86,7 +86,7 @@ p{ font-size: var(--text-sm);}
         display: flex;
         min-width: 190px;
         width: 100%;
-        justify-content: space-between;
+        justify-content: space-evenly;
         border: 1px solid #3b4a6b;
         border-radius: 6px;
         margin: 10px 0 25px;

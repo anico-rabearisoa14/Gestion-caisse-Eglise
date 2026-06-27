@@ -55,6 +55,7 @@ document.getElementById('data-table').addEventListener('click', function (e) {
     const id = row.id;
 
     if (target.classList.contains('btn-delete')) {
+        toast('Le solde sera ajuster ! ');
         console.log('Delete row:', id);
         document.getElementsByName('id-to-delete')[0].value = id;
         document.getElementById('pop-up-confirm').style.display = '';
@@ -96,3 +97,40 @@ const refusBtn = document.getElementById('refusBtn');
 refusBtn.addEventListener('click' , function(){
 document.getElementById('pop-up-confirm').style.display = 'none';
 });
+
+
+//  here is to handle notifications
+const icons = {
+    success: 'ti-circle-check',
+    error:   'ti-circle-x',
+    info:    'ti-info-circle',
+    warning: 'ti-alert-triangle'
+};
+
+function toast(message, type = 'info', duration = 4000) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.innerHTML = `
+        <i class="ti ${icons[type]}"></i>
+        <span>${message}</span>
+        <i class="ti ti-x toast-close"></i>
+    `;
+    container.appendChild(el);
+
+    setTimeout(() => el.classList.add('show'), 10);
+    // requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+    el.querySelector('.toast-close').onclick = () => remove(el);
+    setTimeout(() => remove(el), duration);
+}
+
+function remove(el) {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 200);
+}
