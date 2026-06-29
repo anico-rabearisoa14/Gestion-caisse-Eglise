@@ -14,7 +14,7 @@ require __DIR__ . '/../init.php';
 // )
 
 
- // creer une nouvelle enregistrement
+// creer une nouvelle enregistrement
 function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
 {
     global $pdo;
@@ -35,7 +35,7 @@ function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
 }
 
 
- // lister tous les enregistrements
+// lister tous les enregistrements
 function listeInfoEntre(): ?array
 {
     global $pdo;
@@ -52,7 +52,7 @@ function listeInfoEntre(): ?array
 }
 
 
- // mettre a jour
+// mettre a jour
 function misAJourEntre($id, $ideglise, $motif, $montantEntre, $dateEntre): array
 {
     global $pdo;
@@ -71,14 +71,30 @@ function misAJourEntre($id, $ideglise, $motif, $montantEntre, $dateEntre): array
             ':montantEntre' => $montantEntre,
             ':dateEntre'    => $dateEntre,
         ])) {
-            return ['success' => false, 'message' => 'Erreur de mise à jour'];
+            return [
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Erreur de mise à jour'
+            ];
         }
         if ($stmt->rowCount() === 0) {
-            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+            return [
+                'success' => false,
+                'status' => 'info',
+                'message' => 'Aucun enregistrement trouvé'
+            ];
         }
-        return ['success' => true, 'message' => 'Mise à jour réussie'];
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'Mise à jour réussie'
+        ];
     } catch (PDOException $e) {
-        return ['success' => false, 'message' => 'Erreur de mise à jour : ' . $e->getMessage()];
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Erreur de mise à jour : ' . $e->getMessage()
+        ];
     }
 }
 
@@ -90,18 +106,30 @@ function supprimerEntre($id): array
         $sql = 'DELETE FROM entre WHERE identre = :id';
         $stmt = $pdo->prepare($sql);
         if (!$stmt->execute([':id' => $id])) {
-            return ['success' => false, 'message' => 'Erreur de suppression'];
+            return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Erreur de suppression'];
         }
         if ($stmt->rowCount() === 0) {
-            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+            return [
+            'success' => false,
+            'status' => 'info',
+            'message' => 'Aucun enregistrement trouvé'];
         }
-        return ['success' => true, 'message' => 'Suppression réussie'];
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'Suppression réussie'];
     } catch (PDOException $e) {
-        return ['success' => false, 'message' => 'Erreur de suppression : ' . $e->getMessage()];
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Erreur de suppression : ' . $e->getMessage()];
     }
 }
 
- // recherche d'une enregistrement
+// recherche d'une enregistrement
 function searchEntre(string $query, string $category): array
 {
     global $pdo;
@@ -112,4 +140,3 @@ function searchEntre(string $query, string $category): array
     $stmt->execute([':query' => '%' . $query . '%']);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-?>

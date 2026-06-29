@@ -22,7 +22,6 @@ CREATE TABLE SORTIE (
     FOREIGN KEY (ideglise) REFERENCES EGLISE(ideglise)
 );
 
-
 DELIMITER $$
 -- update solde after all actions
 

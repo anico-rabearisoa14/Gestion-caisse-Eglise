@@ -48,8 +48,11 @@
         line-height: 1.6;
     }
 
+
+    /*  navigation styling */
     nav {
-        background-color: #2c3e50;
+        /* bg-old  #2c3e50*/
+        background-color: #18233b;
         /* #34495e; */
         display: flex;
         justify-content: flex-start;
@@ -307,8 +310,6 @@
         border-bottom-right-radius: 6px;
         margin-right: 2px;
     }
-
-
 
     /* CRUD buttons */
     .btn-create {

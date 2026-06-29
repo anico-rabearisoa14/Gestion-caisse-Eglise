@@ -32,9 +32,9 @@ function handleFilter($category, $dateBegin, $dateEnd): ?array
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $category  = $_GET['to-filter']  ?? '';
-    $dateBegin = $_GET['date-begin'] ?? '';
-    $dateEnd   = $_GET['date-end']   ?? '';
+    $category  = $_GET['to-filter']  ?? null;
+    $dateBegin = $_GET['date-begin'] ?? null;
+    $dateEnd   = $_GET['date-end']   ?? null;
 
     $_SESSION['requested-category-to-print'] = $category;
     $_SESSION['requested-begin-date-to-print'] = $dateBegin;
@@ -42,13 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     if (empty($category) || empty($dateBegin) || empty($dateEnd)) {
         $_SESSION['filter-message'] = 'Veuillez remplir tous les champs.';
-        header('Location: ../bilan.php');
+        header('Location: ../Bilan.php');
         exit();
     }
 
     if ($dateBegin > $dateEnd) {
         $_SESSION['filter-mesaage'] = 'La date de début doit être avant la date de fin.';
-        header('Location: ../bilan.php');
+        header('Location: ../Bilan.php');
         exit();
     }
 
@@ -60,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $_SESSION['filtered-data']  = $result['data'];
         $_SESSION['filtered-total'] = $result['total'];
         $_SESSION['filter-message'] = 'Trouvé.';
-    }
+        }
 
-    header('Location: ../bilan.php');
+    header('Location: ../Bilan.php');
     exit();
 }

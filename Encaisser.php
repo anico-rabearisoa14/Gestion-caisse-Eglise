@@ -3,42 +3,50 @@ require __DIR__ . '/init.php';
 include_once 'crud/entre.php';
 $pageTitle = "Encaissement";
 
+$show_message = $_SESSION['show_message'] ?? 'false';
+$message_type = $_SESSION['message_type'] ?? '';
+$message_body = $_SESSION['message_body'] ?? '';
+
+unset($_SESSION['show_message'], $_SESSION['message_type'], $_SESSION['message_body']);
+
+// handle the message session
+function setSessionMessage(string $type, string $body): void
+{
+    $_SESSION['show_message'] = 'true';
+    $_SESSION['message_type'] = $type;
+    $_SESSION['message_body'] = $body;
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $method = $_POST['_method'] ?? 'POST';
 
     if ($method === 'UPDATE') {
-        // Handle UPDATE
-        $id       = $_POST['id-record'];
-        $ideglise = $_POST['ideglise'];
-        $motif    = $_POST['motif'];
-        $montant  = $_POST['montant'];
-        $date     = $_POST['date-operation'];
+        $res = misAJourEntre(
+            $_POST['id-record'],
+            $_POST['ideglise'],
+            $_POST['motif'],
+            $_POST['montant'],
+            $_POST['date-operation']
+        );
+        setSessionMessage($res['status'], $res['message']);
+    } elseif ($method === 'DELETE') {
+        $res = supprimerEntre($_POST['id-to-delete']);
+        setSessionMessage($res['status'], $res['message']);
+    } else {
+        $res = ajouterEntre(
+            $_POST['ideglise'],
+            $_POST['motif'],
+            $_POST['montant'],
+            $_POST['date-operation']
+        );
+        setSessionMessage(
+            $res ? 'success' : 'error',
+            $res ? 'Ajout reussi' : 'Echec de l\'ajout'
+        );
+    }
 
-        $res = misAJourEntre($id, $ideglise, $motif, $montant, $date);
-        if ($res['success']) {
-            header('Location: ' . $_SERVER['PHP_SELF']);
-            exit();
-        }
-    } elseif($method == 'DELETE') {
-    $id = $_POST['id-to-delete'];
-    $res = supprimerEntre($id);
-    if($res){
-        header('Location:' . $_SERVER['PHP_SELF']);
-    }
-    }
-    else{
-        // Handle POST (insert)
-        $id     = $_POST['ideglise'];
-        $motif  = $_POST['motif'];
-        $montant = $_POST['montant'];
-        $date   = $_POST['date-operation'];
-
-        $res = ajouterEntre($id, $motif, $montant, $date);
-        if ($res) {
-            header('Location: ' . $_SERVER['PHP_SELF']);
-            exit();
-        }
-    }
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit();
 }
 
 $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
@@ -47,8 +55,7 @@ $query = '';
 if (isset($_SESSION['search_results'])) {
     $data  = $_SESSION['search_results'];
     $query = $_SESSION['search_query'];
-    unset($_SESSION['search_results']);
-    unset($_SESSION['search_query']);
+    unset($_SESSION['search_results'], $_SESSION['search_query']);
 } else {
     $data = listeInfoEntre();
 }
@@ -60,18 +67,17 @@ if (isset($_SESSION['search_results'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
+    <link rel="stylesheet" href="fonts/tabler/dist/tabler-icons-200.min.css">
+    <link rel="stylesheet" href="fonts/fa/css/all.min.css">
     <?php include 'includes/styles.php'; ?>
     <?php include_once 'includes/formStyle.php'; ?>
-    <link rel="stylesheet" href="fonts/tabler/dist/tabler-icons-200.min.css"> 
-    <link rel="stylesheet" href="fonts/fa/css/all.min.css">
 </head>
 
 <body>
 
-    <!-- navigation et en tete de page -->
     <?php include 'includes/nav.php'; ?>
     <header>
-        <h1>Liste des ecaissements</h1>
+        <h1>Liste des encaissements</h1>
         <div class="button-container">
             <form class="search-bar" method="GET" action="crud/search.php" autocomplete="off">
                 <input type="hidden" name="table" value="entre">
@@ -87,7 +93,6 @@ if (isset($_SESSION['search_results'])) {
                 <button type="submit">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
-
             </form>
 
             <button id="ajout-btn" type="button" class="normal-btn"
@@ -95,20 +100,18 @@ if (isset($_SESSION['search_results'])) {
         </div>
     </header>
 
-    <!-- Listes de tous les enregistrements -->
     <table id="data-table" border="1" class="data-table">
         <thead style="position: sticky; top:179px">
             <tr>
                 <th class="table-index">ID Entre</th>
                 <th class="table-index">ID Eglise</th>
                 <th style="width:300px;">Motif</th>
-                <th style=" width:150px ;max-width:160px">Montant</th>
+                <th style="width:150px;max-width:160px;">Montant</th>
                 <th>Date</th>
                 <th style="width: 100px;">Actions</th>
             </tr>
         </thead>
         <tbody>
-
             <?php if ($data): ?>
                 <?php foreach ($data as $d): ?>
                     <tr id="<?php echo htmlspecialchars($d['identre']) ?>">
@@ -137,7 +140,6 @@ if (isset($_SESSION['search_results'])) {
         </tbody>
     </table>
 
-    <!--  formulaire d'ajout de nouvelle enregistrement  -->
     <div id="pop-up-form" class="centered-modal" style="display: none;">
         <div class="wrapper">
             <div class="window-decoration">
@@ -148,7 +150,6 @@ if (isset($_SESSION['search_results'])) {
             <h4 class="form-title">Completer le formulaire</h4>
             <hr>
             <form class="form-container" method="POST" action="" autocomplete="off">
-
                 <input id="_method" type="hidden" name="_method">
                 <input type="hidden" id="id-record" name="id-record">
                 <label for="ideglise">ID Eglise</label>
@@ -168,11 +169,7 @@ if (isset($_SESSION['search_results'])) {
         </div>
     </div>
 
-
-    <!-- confirmation prompt avant supprimer -->
-    <form id="pop-up-confirm" method="POST" action="" 
-          class="centered-modal" style="display: none;">
-
+    <form id="pop-up-confirm" method="POST" action="" class="centered-modal" style="display: none;">
         <div class="wrapper">
             <div class="action-title">Etes vous sur de supprimer</div>
             <div class="button-layout">
@@ -182,12 +179,12 @@ if (isset($_SESSION['search_results'])) {
                 <button type="button" id="refusBtn" class="refus-btn">Non</button>
             </div>
         </div>
-
     </form>
 
-    <!-- message feed-back apres chaque operation -->
-    <div class="message-box success-box">
-        <p class="message-success">Message</p>
+    <div class="message-box success-box" style="display: none;">
+        <input id="message-toogle" type="hidden" value="<?php echo htmlspecialchars($show_message) ?>">
+        <input id="message-to-show-type" type="hidden" value="<?php echo htmlspecialchars($message_type ?: ''); ?>">
+        <input id="message-to-show-body" type="hidden" value="<?php echo htmlspecialchars($message_body ?: ''); ?>">
     </div>
 
     <footer>

@@ -34,14 +34,20 @@ $_category = $_GET['_category'];
 $_date_begin = $_GET['date-to-print-begin'];
 $_date_end = $_GET['date-to-print-end'];
 
+$show_message = $_SESSION['show_message'] ?? 'false';
+$message_type = $_SESSION['message_type'] ?? '';
+$message_body = $_SESSION['message_body'] ?? '';
 
+$flux = '';
 switch($_category){
     case 'sortie' :
         $phrase_en_tete = 'Mouvement de sortie de caisse';
+        $flux = 'sortant';
         break;
 
     case 'entre' :
-        $phrase_en_tete = 'Mouvement de sortie de caisse';
+        $phrase_en_tete = 'Mouvement d\'entre de caisse';
+        $flux = 'entrant';
         break;
     default :
     $phrase_en_tete = '';
@@ -88,7 +94,7 @@ $html = '
     <tbody>
         ' . ($rows ?: '<tr><td colspan="4" style="text-align:center;">Aucune donnée</td></tr>') . '
     </tbody>
-</table>' . '<p>Total : ' . $formatter->formatCurrency($montant_total , 'MGA') . '</p> <br>
+</table>' . '<p>Total montant '. $flux .' :'. $formatter->formatCurrency($montant_total , 'MGA') . '</p> <br>
 <p style="text-align:center; color:#666;">Imprimé le ' . date('d/m/Y') . '</p>';
 
 $mpdf = new \Mpdf\Mpdf([

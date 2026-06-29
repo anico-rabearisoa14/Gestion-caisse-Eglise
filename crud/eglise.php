@@ -24,7 +24,7 @@ function createEglise($ideglise, $Design, $Solde): bool
     }
 }
 
-function listeInfoEglise() : ?array
+function listeInfoEglise(): ?array
 {
     global $pdo;
     try {
@@ -50,14 +50,30 @@ function misAJourEglise($ideglise, $Design, $Solde): array
                 WHERE ideglise = :id';
         $stmt = $pdo->prepare($sql);
         if (!$stmt->execute([':id' => $ideglise, ':design' => $Design, ':solde' => $Solde])) {
-            return ['success' => false, 'message' => 'Erreur de mise à jour'];
+            return [
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Erreur de mise à jour'
+            ];
         }
         if ($stmt->rowCount() === 0) {
-            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+            return [
+                'success' => false,
+                'status' => 'info',
+                'message' => 'Aucun enregistrement trouvé'
+            ];
         }
-        return ['success' => true, 'message' => 'Mise à jour réussie'];
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'Mise à jour réussie'
+        ];
     } catch (PDOException $e) {
-        return ['success' => false, 'message' => 'Erreur de mise à jour : ' . $e->getMessage()];
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Erreur de mise à jour : ' . $e->getMessage()
+        ];
     }
 }
 
@@ -68,12 +84,24 @@ function supprimerEglise($ideglise): array
         $sql = 'DELETE FROM eglise WHERE ideglise = :id';
         $stmt = $pdo->prepare($sql);
         if (!$stmt->execute([':id' => $ideglise])) {
-            return ['success' => false, 'message' => 'Erreur de suppression'];
+            return [
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Erreur de suppression'
+            ];
         }
         if ($stmt->rowCount() === 0) {
-            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+            return [
+                'success' => false,
+                'status' => 'info',
+                'message' => 'Aucun enregistrement trouvé'
+            ];
         }
-        return ['success' => true, 'message' => 'Suppression réussie'];
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'Suppression réussie'
+        ];
     } catch (PDOException $e) {
         return ['success' => false, 'message' => 'Erreur de suppression : ' . $e->getMessage()];
     }
@@ -86,5 +114,3 @@ function searchEglise(string $query): array
     $stmt->execute([':query' => '%' . $query . '%']);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-?>

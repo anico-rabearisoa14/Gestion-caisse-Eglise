@@ -99,7 +99,9 @@ document.getElementById('pop-up-confirm').style.display = 'none';
 });
 
 
-//  here is to handle notifications
+//  here is to handle messages & notifications
+
+//  tenplate for the toast notification
 const icons = {
     success: 'ti-circle-check',
     error:   'ti-circle-x',
@@ -127,6 +129,7 @@ function toast(message, type = 'info', duration = 4000) {
     setTimeout(() => el.classList.add('show'), 10);
     // requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
     el.querySelector('.toast-close').onclick = () => remove(el);
+    document.getElementById('message-toogle').value = 'false';
     setTimeout(() => remove(el), duration);
 }
 
@@ -134,3 +137,18 @@ function remove(el) {
     el.classList.remove('show');
     setTimeout(() => el.remove(), 200);
 }
+
+
+//  handle if the message can be showed 
+const allowedTypes = ['success', 'error', 'info', 'warning'];
+document.addEventListener('DOMContentLoaded', function() {
+    const messToggle = document.getElementById('message-toogle').value;
+    const messType   = document.getElementById('message-to-show-type').value;
+    const messBody   = document.getElementById('message-to-show-body').value;
+
+    if (messToggle !== 'false' && allowedTypes.includes(messType) && messBody !== '') {
+        console.log('Message : type => ' + messType + ' body => ' + messBody);
+        toast(messBody, messType);
+    }
+});
+

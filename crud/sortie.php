@@ -15,27 +15,39 @@ require __DIR__ . '/../init.php';
 // );
 
 
- // creer une nouvelle enregistrement
+// creer une nouvelle enregistrement
 function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie): bool
 {
+
     global $pdo;
-    try {
-        $sql = "INSERT INTO sortie (ideglise, motif, montantSortie, dateSortie)
-                VALUES (:ideglise, :motif, :montantSortie, :dateSortie)";
-        $stmt = $pdo->prepare($sql);
-        return $stmt->execute([
-            ':ideglise'      => $ideglise,
-            ':motif'         => $motif,
-            ':montantSortie' => $montantSortie,
-            ':dateSortie'    => $dateSortie,
-        ]);
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
+
+    $sql = "SELECT * FROM eglise";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+    $montantTotal = $rows['Solde'];
+
+    if ($montantSortie > $montantTotal) {
         return false;
+    } else {
+        try {
+            $sql = "INSERT INTO sortie (ideglise, motif, montantSortie, dateSortie)
+                VALUES (:ideglise, :motif, :montantSortie, :dateSortie)";
+            $stmt = $pdo->prepare($sql);
+            return $stmt->execute([
+                ':ideglise'      => $ideglise,
+                ':motif'         => $motif,
+                ':montantSortie' => $montantSortie,
+                ':dateSortie'    => $dateSortie,
+            ]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
     }
 }
 
- // lire tous
+// lire tous
 function listeInfoSortie(): ?array
 {
     global $pdo;
@@ -50,38 +62,69 @@ function listeInfoSortie(): ?array
         return null;
     }
 }
- 
- // mis a jour
+
+// mis a jour
 function misAJourSortie($id, $ideglise, $motif, $montantSortie, $dateSortie): array
 {
     global $pdo;
-    try {
-        $sql = 'UPDATE sortie
+    $sql = "SELECT * FROM eglise";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+    $montantTotal = $rows['Solde'];
+
+    if ($montantSortie > $montantTotal) {
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Echec , Solde insuffisante'
+        ];
+    } else {
+        try {
+            $sql = 'UPDATE sortie
                 SET ideglise      = :ideglise,
                     motif         = :motif,
                     montantSortie = :montantSortie,
                     dateSortie    = :dateSortie
                 WHERE idsortie = :id';
-        $stmt = $pdo->prepare($sql);
-        if (!$stmt->execute([
-            ':id'            => $id,
-            ':ideglise'      => $ideglise,
-            ':motif'         => $motif,
-            ':montantSortie' => $montantSortie,
-            ':dateSortie'    => $dateSortie,
-        ])) {
-            return ['success' => false, 'message' => 'Erreur de mise à jour'];
+
+            $stmt = $pdo->prepare($sql);
+            if (!$stmt->execute([
+                ':id'            => $id,
+                ':ideglise'      => $ideglise,
+                ':motif'         => $motif,
+                ':montantSortie' => $montantSortie,
+                ':dateSortie'    => $dateSortie,
+            ])) {
+                return [
+                    'success' => false,
+                    'status' => 'error',
+                    'message' => 'Erreur de mise à jour'
+                ];
+            }
+            if ($stmt->rowCount() === 0) {
+                return [
+                    'success' => false,
+                    'status' => 'info',
+                    'message' => 'Aucun enregistrement trouvé'
+                ];
+            }
+            return [
+                'success' => true,
+                'status' => 'success',
+                'message' => 'Mise à jour réussie'
+            ];
+        } catch (PDOException $e) {
+            return [
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Erreur de mise à jour : ' . $e->getMessage()
+            ];
         }
-        if ($stmt->rowCount() === 0) {
-            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
-        }
-        return ['success' => true, 'message' => 'Mise à jour réussie'];
-    } catch (PDOException $e) {
-        return ['success' => false, 'message' => 'Erreur de mise à jour : ' . $e->getMessage()];
     }
 }
 
- // supprimer une sortie
+// supprimer une sortie
 function supprimerSortie($id): array
 {
     global $pdo;
@@ -89,14 +132,30 @@ function supprimerSortie($id): array
         $sql = 'DELETE FROM sortie WHERE idsortie = :id';
         $stmt = $pdo->prepare($sql);
         if (!$stmt->execute([':id' => $id])) {
-            return ['success' => false, 'message' => 'Erreur de suppression'];
+            return [
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Erreur de suppression'
+            ];
         }
         if ($stmt->rowCount() === 0) {
-            return ['success' => false, 'message' => 'Aucun enregistrement trouvé'];
+            return [
+                'success' => false,
+                'status' => 'info',
+                'message' => 'Aucun enregistrement trouvé'
+            ];
         }
-        return ['success' => true, 'message' => 'Suppression réussie'];
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'Suppression réussie'
+        ];
     } catch (PDOException $e) {
-        return ['success' => false, 'message' => 'Erreur de suppression : ' . $e->getMessage()];
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Erreur de suppression : ' . $e->getMessage()
+        ];
     }
 }
 
@@ -112,5 +171,3 @@ function searchSortie(string $query, string $category): array
     $stmt->execute([':query' => '%' . $query . '%']);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-?>

@@ -4,17 +4,32 @@ $pageTitle = "Filtre mouvement";
 
 $data = [];
 $totalMontant = 0;
-$formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
 
-$category  = $_SESSION['requested-category-to-print'] ?? null;
-$dateBegin = $_SESSION['requested-begin-date-to-print'] ?? null;
-$dateEnd   = $_SESSION['requested-end-date-to-print'] ?? null;
-$canPrint  = $category && $dateBegin && $dateEnd;
+$show_message = $_SESSION['show_message'] ?? 'false'; 
+$message_type = $_SESSION['message_type'] ?? '';
+$message_body = $_SESSION['message_body'] ?? '';
+
+unset($_SESSION['show_message']);
+unset($_SESSION['message_type']);
+unset($_SESSION['message_body']);
+
+//  handle variables for printing 
+$canPrint = false;
+$category  = null;
+$dateBegin = null;
+$dateEnd   = null;
+
+$formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
 
 // get the values of the filter from the database
 if (isset($_SESSION['filtered-data'])) {
     $data = $_SESSION['filtered-data'];
     $totalMontant = $_SESSION['filtered-total'];
+
+    $category  = $_SESSION['requested-category-to-print'] ?? null;
+    $dateBegin = $_SESSION['requested-begin-date-to-print'] ?? null;
+    $dateEnd   = $_SESSION['requested-end-date-to-print'] ?? null;
+    $canPrint  = ($category && $dateBegin && $dateEnd);
 
     // remove the variables from the session
     unset($_SESSION['filtered-data']);
@@ -47,16 +62,21 @@ if (isset($_SESSION['filtered-data'])) {
         <form id="TriggerOnPageLoad" method="GET" action="filter/filter.php" class="main-form-wrapper">
             <div id="select-area">
                 <label for="to-filter">Filtrer une </label>
-                <select id="to-filter" name="to-filter">
-                    <option value="null">Choisir</option>
+                <select id="to-filter" name="to-filter" required>
+                    <option value="" disabled selected>Choisir</option>
                     <option value="sortie">Sortie</option>
-                    <option value="entre">Entree</option>
+                    <option value="entre">Entrée</option>
                 </select>
             </div>
+
             <label for="date-begin">du </label>
-            <input type="date" id="date-begin" class="date-begin" name="date-begin" value="<?php echo htmlspecialchars($_SESSION['requested-begin-date-to-print'] ?: '') ?>">
+            <input type="date" id="date-begin" class="date-begin" name="date-begin"
+                value="<?php echo htmlspecialchars($dateBegin ?: date('y-m-d')) ?>" required>
+
             <label for="date-end">jusqu'au </label>
-            <input type="date" id="date-end" class="date-end" name="date-end" value="<?php echo htmlspecialchars($_SESSION['requested-end-date-to-print'] ?: '') ?>">
+            <input type="date" id="date-end" class="date-end" name="date-end"
+                value="<?php echo htmlspecialchars($dateEnd ?: date('y-m-d')) ?>" required>
+
             <div class="button-layout" style="margin-top: 15px;">
                 <button class="submit-btn" type="submit">Demander</button>
             </div>
@@ -65,48 +85,30 @@ if (isset($_SESSION['filtered-data'])) {
         <!-- afficher le resultat d'une mouvement -->
         <div class="reponse-filtre">
 
-            <!-- <form class="button-imprimer" method="GET" action="print.php" style="display: flex; width:100%">
-                <p>Resultat :</p>
-                <button type="submit" class="normal-btn"
-                    style="background-color:transparent;
-                border:1px solid #000e2c;
-                       border-color:#3b4a6b;
-                       width:fit-content;
-                       align-self:flex-end;
-                       color:#000e2c">Imprimer</button>
-                <input type="text" name="_category" value="<?php
-                //  echo htmlspecialchars($_SESSION['requested-category-to-print'] ?: 'null') ?>">
-                <input type="text" name="date-to-print-begin" value="<?php 
-                // echo htmlspecialchars($_SESSION['requested-begin-date-to-print'] ?: '') ?>">
-                <input type="text" name="date-to-print-end" value="<?php 
-                // echo htmlspecialchars($_SESSION['requested-end-date-to-print'] ?: '') ?>">
-
- -->
-
-
             <form method="GET" action="print.php">
-                <input type="hidden" name="_category" value="<?php echo htmlspecialchars($category ?? ''); ?>">
-                <input type="hidden" name="date-to-print-begin" value="<?php echo htmlspecialchars($dateBegin ?? ''); ?>">
-                <input type="hidden" name="date-to-print-end" value="<?php echo htmlspecialchars($dateEnd ?? ''); ?>">
+                <input type="hidden" name="_category"
+                    value="<?php echo htmlspecialchars($category ?? ''); ?>">
+
+                <input type="hidden" name="date-to-print-begin"
+                    value="<?php echo htmlspecialchars($dateBegin ?? ''); ?>">
+
+                <input type="hidden" name="date-to-print-end"
+                    value="<?php echo htmlspecialchars($dateEnd ?? ''); ?>">
 
                 <button type="submit"
                     class="normal-btn"
                     <?php echo !$canPrint ? 'disabled' : ''; ?>
-                    style="background-color:transparent;
-                   border:1px solid #3b4a6b;
-                   width:fit-content;
-                   color:#000e2c;
+                    style="background-color:transparent ;border:1px solid #3b4a6b ;width:fit-content ;color:#000e2c;
                    <?php echo !$canPrint ? 'opacity:0.4; cursor:not-allowed;' : ''; ?>">
-                    Imprimer
-                </button>
-            </form>
+                    Imprimer</button>
             </form>
 
-            <p>Entre <span id="begin">23-02-2023</span> et <span id="end">15-03-2023</span></p>
+            <p>Entre <span id="begin"><?php echo htmlspecialchars($dateBegin ?? ''); ?></span>
+             et <span id="end"><?php echo htmlspecialchars($dateEnd ?? ''); ?></span></p>
             <table id="data-table" border="1" class="filtered-data-table">
                 <thead style="position: sticky; top:173px">
                     <tr>
-                        <th style="min-width:85px; width:200px">Date</th>
+                        <th style="min-width:85px; width:200px">Date <span><?php echo htmlspecialchars($category ?? ''); ?></span></th>
                         <th style="min-width:100px; width:300px;">Motif</th>
                         <th style="max-width:300px; width:250px; min-width:90px">Montant</th>
                     </tr>
@@ -143,100 +145,43 @@ if (isset($_SESSION['filtered-data'])) {
         </div>
     </div>
 
+    <div class="message-box success-box" style="display: none;">
+        <input id="message-toogle" type="hidden"
+            value="<?php echo htmlspecialchars($show_message) ?>">
+
+        <input id="message-to-show-type" type="hidden"
+            value="<?php echo htmlspecialchars($message_type ?: ''); ?>">
+
+        <input id="message-to-show-body" type="hidden"
+            value="<?php echo htmlspecialchars($message_body ?: ''); ?>">
+    </div>
+
     <footer>
         &copy; <?php echo date("Y"); ?> My PHP Project. All rights reserved.
     </footer>
     <!-- <script src="script/utilities.js"></script> -->
     <script>
-        // just to handle visual text on what filter the user is doing 
-        // const selectInput = document.getElementById('to-filter');
-        // document.getElementsByClassName('state')[0].textContent = 'Mouvement de caisse';
-        // // document.getElementsByName('_category')[0].value = 'sortie';
 
-        // selectInput.addEventListener('input', function() {
-        //     const value = selectInput.value;
+        document.addEventListener('DOMContentLoaded', function() {
+            const category = "<?php echo htmlspecialchars($category ?? false); ?>";
+            const dateBegin = "<?php echo htmlspecialchars($dateBegin ?? false); ?>";
+            const dateEnd = "<?php echo htmlspecialchars($dateEnd ?? false); ?>";
+            const canPrint = category && dateBegin && dateEnd;
 
-        //     if (value == 'sortie') {
-        //         document.getElementsByClassName('state')[0].textContent = 'Mouvement de sortie de caisse';
-        //         document.getElementById('flux').textContent = 'sortant';
-        //         document.getElementsByName('_category')[0].value = 'sortie';
+            // Show toast based on state
+            if (!canPrint) {
+                toast('Veuillez faire une filtre avant d\'imprimer', 'warning');
+           }
 
-        //     } else {
-        //         document.getElementsByClassName('state')[0].textContent = "Mouvement d’entrée en caisse";
-        //         document.getElementById('flux').textContent = 'entrant';
-        //         document.getElementsByName('_category')[0].value = 'entre';
-        //     }
-        // });
+            // Update UI state
+            const btn = document.querySelector('.button-imprimer button[type="submit"]');
+            if (btn) {
+                btn.disabled = !canPrint;
+                btn.style.opacity = canPrint ? '1' : '0.4';
+                btn.style.cursor = canPrint ? 'pointer' : 'not-allowed';
+            }
+        });
 
-
-document.addEventListener('DOMContentLoaded', function () {
-    const category  = "<?php echo htmlspecialchars($category ?? ''); ?>";
-    const dateBegin = "<?php echo htmlspecialchars($dateBegin ?? ''); ?>";
-    const dateEnd   = "<?php echo htmlspecialchars($dateEnd ?? ''); ?>";
-    const canPrint  = category && dateBegin && dateEnd;
-
-    // // Show toast based on state
-    // if (!canPrint) {
-    //     toast('Veuillez faire une filtre avant d\'imprimer', 'warning');
-    // }
-
-    // Update UI state
-    const btn = document.querySelector('.button-imprimer button[type="submit"]');
-    if (btn) {
-        btn.disabled = !canPrint;
-        btn.style.opacity = canPrint ? '1' : '0.4';
-        btn.style.cursor  = canPrint ? 'pointer' : 'not-allowed';
-    }
-});
-
-        /*  listen for date input and display on the result */
-        // const dateBegin = document.getElementById('date-begin');
-        // const dateBeginSpan = document.getElementById('begin');
-        // const dateEnd = document.getElementById('date-end');
-        // const dateEndSpan = document.getElementById('end');
-
-
-        // // for the beginin
-        // dateBegin.addEventListener('input', function() {
-        //     dateBeginSpan.textContent = dateBegin.value;
-        //     document.getElementsByName('date-to-print-begin')[0].value = dateBegin.value;
-        // });
-        // // for the end
-        // dateEnd.addEventListener('input', function() {
-        //     dateEndSpan.textContent = dateEnd.value;
-        //     document.getElementsByName('date-to-print-end')[0].value = dateEnd.value;
-        // });
-
-        /*  adjust date input value */
-        // function adjustDate() {
-        //     const begin = document.getElementsByName('date-begin');
-        //     const end = document.getElementsByName('date-end');
-        //     const today = new Date();
-
-        //     // Extract components
-        //     const year = today.getFullYear();
-        //     // getMonth() returns 0-11, so add 1
-        //     const month = String(today.getMonth() + 1).padStart(2, '0');
-        //     const monthBegin = String((today.getMonth() + 1) - 1).padStart(2, '0');
-        //     const day = String(today.getDate()).padStart(2, '0');
-
-        //     // Format as YYYY-MM-DD
-        //     const formattedDateBegin = `${year}-${monthBegin}-${day}`;
-        //     const formattedDateEnd = `${year}-${month}-${day}`;
-
-        //     // bind the values
-        //     begin[0].value = formattedDateBegin;
-        //     end[0].value = formattedDateEnd;
-
-        //     // for the interface only (to display the actual date on the result)
-        //     dateBeginSpan.textContent = dateBegin.value;
-        //     dateEndSpan.textContent = dateEnd.value;
-        //     // document.getElementsByName('date-to-print-end')[0].value = dateEnd.value;
-        //     // document.getElementsByName('date-to-print-begin')[0].value = dateBegin.value;
-        // }
-
-        // adjustDate();
     </script>
 </body>
-
 </html>
