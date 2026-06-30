@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_POST['id-record'],
             $_POST['ideglise'],
             $_POST['motif'],
+            $_POST['ancien-montant'],
             $_POST['montant'],
             $_POST['date-operation']
         );
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_POST['montant'],
             $_POST['date-operation']
         );
-        setSessionMessage($res ? 'success' : 'error' ,$res ? 'Ajout reussie' : 'Echec , solde insuffisant');
+        setSessionMessage($res['status'] ,$res['message']);
     }
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit();
@@ -119,7 +120,7 @@ if (isset($_SESSION['search_results'])) {
                         <td><?php echo htmlspecialchars($d['dateSortie']) ?></td>
                         <td class="action-cell">
                             <button class="btn-update" title="Modifier">
-                                <i class="fa-solid fa-pen"></i>
+                                <i class="fa-solid fa-pencil"></i>
                             </button>
                             <button class="btn-delete" title="Supprimer">
                                 <i class="fa-solid fa-trash-can"></i>
@@ -148,13 +149,14 @@ if (isset($_SESSION['search_results'])) {
                 <input id="_method" type="hidden" name="_method">
                 <input type="hidden" id="id-record" name="id-record">
                 <label for="ideglise">ID Eglise</label>
-                <input type="text" name="ideglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>">
+                <input type="text" name="ideglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" readonly required>
 
                 <label for="motif">Motif du decaissement</label>
                 <input type="text" name="motif" required>
 
                 <label for="montant">Montant a retirer</label>
                 <input type="number" name="montant" min="10000" required>
+                <input type="hidden" name="ancien-montant">
 
                 <label for="date-operation">Date d'operation</label>
                 <input id="today-date" type="date" name="date-operation">
@@ -186,6 +188,7 @@ if (isset($_SESSION['search_results'])) {
         &copy; <?php echo date("Y"); ?> My PHP Project. All rights reserved.
     </footer>
     <script src="script/action.js"></script>
+    <script src="script/notification.js"></script>
 </body>
 
 </html>

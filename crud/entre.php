@@ -2,6 +2,18 @@
 require __DIR__ . '/../db/databasehelper.php';
 require __DIR__ . '/../init.php';
 
+function getTotalAmount()
+{
+    global $pdo;
+    $sql = "SELECT * FROM eglise";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+    $montantTotal = $rows['Solde'];
+    return $montantTotal;
+}
+
+
 // ENTRE
 
 // CREATE TABLE ENTRE (
@@ -12,7 +24,6 @@ require __DIR__ . '/../init.php';
 //     dateEntre DATE DEFAULT (CURRENT_DATE),
 //     FOREIGN KEY (ideglise) REFERENCES EGLISE(ideglise)
 // )
-
 
 // creer une nouvelle enregistrement
 function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
@@ -34,7 +45,6 @@ function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
     }
 }
 
-
 // lister tous les enregistrements
 function listeInfoEntre(): ?array
 {
@@ -51,18 +61,30 @@ function listeInfoEntre(): ?array
     }
 }
 
-
 // mettre a jour
-function misAJourEntre($id, $ideglise, $motif, $montantEntre, $dateEntre): array
+
+function misAJourEntre($id, $ideglise, $motif, $ancienMontant, $montantEntre, $dateEntre): array
 {
     global $pdo;
+
+    $soldeActuel = getTotalAmount();
+    $soldePrevu = $soldeActuel - $ancienMontant + $montantEntre;
+
+    if ($soldePrevu < 10000) {
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Échec, le solde deviendrait insuffisant'
+        ];
+    }
+
     try {
         $sql = 'UPDATE entre
-                SET ideglise     = :ideglise,
-                    motif        = :motif,
-                    montantEntre = :montantEntre,
-                    dateEntre    = :dateEntre
-                WHERE identre = :id';
+            SET ideglise     = :ideglise,
+                motif        = :motif,
+                montantEntre = :montantEntre,
+                dateEntre    = :dateEntre
+            WHERE identre = :id';
         $stmt = $pdo->prepare($sql);
         if (!$stmt->execute([
             ':id'           => $id,
@@ -71,61 +93,52 @@ function misAJourEntre($id, $ideglise, $motif, $montantEntre, $dateEntre): array
             ':montantEntre' => $montantEntre,
             ':dateEntre'    => $dateEntre,
         ])) {
-            return [
-                'success' => false,
-                'status' => 'error',
-                'message' => 'Erreur de mise à jour'
-            ];
+            return ['success' => false, 'status' => 'error', 'message' => 'Erreur de mise à jour'];
         }
         if ($stmt->rowCount() === 0) {
-            return [
-                'success' => false,
-                'status' => 'info',
-                'message' => 'Aucun enregistrement trouvé'
-            ];
+            return ['success' => false, 'status' => 'info', 'message' => 'Aucun enregistrement trouvé'];
         }
-        return [
-            'success' => true,
-            'status' => 'success',
-            'message' => 'Mise à jour réussie'
-        ];
+        return ['success' => true, 'status' => 'success', 'message' => 'Mise à jour réussie'];
     } catch (PDOException $e) {
-        return [
-            'success' => false,
-            'status' => 'error',
-            'message' => 'Erreur de mise à jour : ' . $e->getMessage()
-        ];
+        return ['success' => false, 'status' => 'error', 'message' => 'Erreur de mise à jour : ' . $e->getMessage()];
     }
 }
 
+
 // supprimer
+
 function supprimerEntre($id): array
 {
     global $pdo;
     try {
+        $stmt = $pdo->prepare("SELECT montantEntre FROM entre WHERE identre = :id");
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return ['success' => false, 'status' => 'info', 'message' => 'Aucun enregistrement trouvé'];
+        }
+
+        $montantEntre = $row['montantEntre'];
+        $soldePrevu = getTotalAmount() - $montantEntre;
+
+        if ($soldePrevu < 10000) {
+            return [
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Échec, la suppression rendrait le solde insuffisant '
+                ];
+        }
+
         $sql = 'DELETE FROM entre WHERE identre = :id';
         $stmt = $pdo->prepare($sql);
         if (!$stmt->execute([':id' => $id])) {
-            return [
-            'success' => false,
-            'status' => 'error',
-            'message' => 'Erreur de suppression'];
+            return ['success' => false, 'status' => 'error', 'message' => 'Erreur de suppression'];
         }
-        if ($stmt->rowCount() === 0) {
-            return [
-            'success' => false,
-            'status' => 'info',
-            'message' => 'Aucun enregistrement trouvé'];
-        }
-        return [
-            'success' => true,
-            'status' => 'success',
-            'message' => 'Suppression réussie'];
+
+        return ['success' => true, 'status' => 'success', 'message' => 'Suppression réussie'];
     } catch (PDOException $e) {
-        return [
-            'success' => false,
-            'status' => 'error',
-            'message' => 'Erreur de suppression : ' . $e->getMessage()];
+        return ['success' => false, 'status' => 'error', 'message' => 'Erreur de suppression : ' . $e->getMessage()];
     }
 }
 

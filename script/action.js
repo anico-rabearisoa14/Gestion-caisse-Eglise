@@ -61,6 +61,11 @@ document.getElementById('data-table').addEventListener('click', function (e) {
         document.getElementById('pop-up-confirm').style.display = '';
         
     } else if (target.classList.contains('btn-update')) {
+
+        // show warning message
+    toast(`Alerte ! La modification d’un enregistrement existant peut briser le solde principal. Utilisez-le avec prudence..` , 'warning' , 15000);
+    toast(`Pas toutes les modifications peuvent être acceptée` , 'warning' , 10000);
+
         //show the pop-up
         document.getElementById('id-record').style.display = '';
         document.getElementById('_method').value = 'UPDATE';
@@ -82,7 +87,9 @@ document.getElementById('data-table').addEventListener('click', function (e) {
         document.getElementsByName('id-record')[0].value = id;
         document.getElementsByName('ideglise')[0].value = ideglise;
         document.getElementsByName('motif')[0].value = motif;
+
         document.getElementsByName('montant')[0].value = Number(montant);
+        document.getElementsByName('ancien-montant')[0].value = Number(montant);
         document.getElementsByName('date-operation')[0].value = date;
         console.log('Edit row:', id);
         console.log(id, ideglise, motif, montant, date);
@@ -98,57 +105,4 @@ refusBtn.addEventListener('click' , function(){
 document.getElementById('pop-up-confirm').style.display = 'none';
 });
 
-
-//  here is to handle messages & notifications
-
-//  tenplate for the toast notification
-const icons = {
-    success: 'ti-circle-check',
-    error:   'ti-circle-x',
-    info:    'ti-info-circle',
-    warning: 'ti-alert-triangle'
-};
-
-function toast(message, type = 'info', duration = 4000) {
-    let container = document.getElementById('toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        document.body.appendChild(container);
-    }
-
-    const el = document.createElement('div');
-    el.className = `toast ${type}`;
-    el.innerHTML = `
-        <i class="ti ${icons[type]}"></i>
-        <span>${message}</span>
-        <i class="ti ti-x toast-close"></i>
-    `;
-    container.appendChild(el);
-
-    setTimeout(() => el.classList.add('show'), 10);
-    // requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
-    el.querySelector('.toast-close').onclick = () => remove(el);
-    document.getElementById('message-toogle').value = 'false';
-    setTimeout(() => remove(el), duration);
-}
-
-function remove(el) {
-    el.classList.remove('show');
-    setTimeout(() => el.remove(), 200);
-}
-
-
-//  handle if the message can be showed 
-const allowedTypes = ['success', 'error', 'info', 'warning'];
-document.addEventListener('DOMContentLoaded', function() {
-    const messToggle = document.getElementById('message-toogle').value;
-    const messType   = document.getElementById('message-to-show-type').value;
-    const messBody   = document.getElementById('message-to-show-body').value;
-
-    if (messToggle !== 'false' && allowedTypes.includes(messType) && messBody !== '') {
-        console.log('Message : type => ' + messType + ' body => ' + messBody);
-        toast(messBody, messType);
-    }
-});
 

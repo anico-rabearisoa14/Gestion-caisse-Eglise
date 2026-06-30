@@ -32,24 +32,29 @@ function listeInfoEglise(): ?array
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $rows = $stmt->fetch(PDO::FETCH_ASSOC);
-        $_SESSION['ID_EGLISE'] = $rows['ideglise'];
-        return $rows ?: null;
+
+        if ($rows !== false) {
+            $_SESSION['ID_EGLISE'] = $rows['ideglise'];
+            return $rows;
+        } else {
+            $_SESSION['ID_EGLISE'] = null;
+            return null;
+        }
     } catch (PDOException $e) {
         error_log($e->getMessage());
-        return [];
+        return null;
     }
 }
 
-function misAJourEglise($ideglise, $Design, $Solde): array
+function misAJourEglise($ideglise, $Design): array
 {
     global $pdo;
     try {
         $sql = 'UPDATE eglise
                 SET Design = :design,
-                    Solde  = :solde
                 WHERE ideglise = :id';
         $stmt = $pdo->prepare($sql);
-        if (!$stmt->execute([':id' => $ideglise, ':design' => $Design, ':solde' => $Solde])) {
+        if (!$stmt->execute([':id' => $ideglise, ':design' => $Design])) {
             return [
                 'success' => false,
                 'status' => 'error',
@@ -80,30 +85,48 @@ function misAJourEglise($ideglise, $Design, $Solde): array
 function supprimerEglise($ideglise): array
 {
     global $pdo;
-    try {
-        $sql = 'DELETE FROM eglise WHERE ideglise = :id';
-        $stmt = $pdo->prepare($sql);
-        if (!$stmt->execute([':id' => $ideglise])) {
+
+    //  delete all the informations linked to the table
+    $sql = 'TRUNCATE entre;';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    $sql1 = 'TRUNCATE sortie;';
+    $stmt1 = $pdo->prepare($sql1);
+    $stmt1->execute();
+
+    if ($stmt && $stmt1) {
+        try {
+            $sql = 'DELETE FROM eglise WHERE ideglise = :id';
+            $stmt = $pdo->prepare($sql);
+            if (!$stmt->execute([':id' => $ideglise])) {
+                return [
+                    'success' => false,
+                    'status' => 'error',
+                    'message' => 'Erreur de suppression'
+                ];
+            }
+            if ($stmt->rowCount() === 0) {
+                return [
+                    'success' => false,
+                    'status' => 'info',
+                    'message' => 'Aucun enregistrement trouvé'
+                ];
+            }
             return [
-                'success' => false,
-                'status' => 'error',
-                'message' => 'Erreur de suppression'
+                'success' => true,
+                'status' => 'success',
+                'message' => 'Suppression réussie'
             ];
+        } catch (PDOException $e) {
+            return ['success' => false, 'message' => 'Erreur de suppression : ' . $e->getMessage()];
         }
-        if ($stmt->rowCount() === 0) {
-            return [
-                'success' => false,
-                'status' => 'info',
-                'message' => 'Aucun enregistrement trouvé'
-            ];
-        }
+    } else {
         return [
-            'success' => true,
-            'status' => 'success',
-            'message' => 'Suppression réussie'
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Echec de suppression'
         ];
-    } catch (PDOException $e) {
-        return ['success' => false, 'message' => 'Erreur de suppression : ' . $e->getMessage()];
     }
 }
 

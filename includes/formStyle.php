@@ -66,7 +66,7 @@
   
 .action-title{
   font-size: 1rem;
-  font-weight: bolder;
+  text-align: center;
   justify-self: center;
   margin-bottom: 10px;
 }

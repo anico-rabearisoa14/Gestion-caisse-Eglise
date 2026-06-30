@@ -132,7 +132,8 @@
         bottom: 0;
         right: 0px;
         left: 0px;
-        background-color: #2c3e50;
+        /* background-color: #2c3e50; */
+        background-color: #18233b;
     }
 
 
@@ -275,6 +276,14 @@
         width: 100px;
     }
 
+    .action-cell {
+    border: none;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    }
+
+
     /* buttons container */
     .button-container {
         display: flex;
@@ -329,7 +338,7 @@
     }
 
     .btn-update {
-        color: #7b6fb0;
+        color: #1b2c52;
         background: none;
         border: none;
         cursor: pointer;
@@ -337,7 +346,7 @@
     }
 
     .btn-delete {
-        color: #3b4a6b;
+        color: #ef4444cc;
         background: none;
         border: none;
         cursor: pointer;
@@ -358,10 +367,7 @@
         border-color: #3b4a6b;
     }
 
-
-
     /* Toast notifications style */
-
     #toast-container {
     position: fixed;
     bottom: 25px;

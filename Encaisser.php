@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_POST['id-record'],
             $_POST['ideglise'],
             $_POST['motif'],
+            $_POST['ancien-montant'],
             $_POST['montant'],
             $_POST['date-operation']
         );
@@ -144,7 +145,7 @@ if (isset($_SESSION['search_results'])) {
         <div class="wrapper">
             <div class="window-decoration">
                 <button id="btn-close" class="close-btn" type="button" style="margin-bottom: 0;">
-                    <i class="fa-solid fa-xmark"></i>
+                    <i class="fa fa-xmark"></i>
                 </button>
             </div>
             <h4 class="form-title">Completer le formulaire</h4>
@@ -153,13 +154,14 @@ if (isset($_SESSION['search_results'])) {
                 <input id="_method" type="hidden" name="_method">
                 <input type="hidden" id="id-record" name="id-record">
                 <label for="ideglise">ID Eglise</label>
-                <input type="text" name="ideglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" readonly>
+                <input type="text" name="ideglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" readonly required>
 
                 <label for="motif">Motif</label>
                 <input type="text" name="motif" required>
 
                 <label for="montant">Montant</label>
                 <input type="number" name="montant" min="10000" required>
+                <input type="hidden" name="ancien-montant">
 
                 <label for="date-operation">Date</label>
                 <input id="today-date" type="date" name="date-operation">
@@ -191,6 +193,7 @@ if (isset($_SESSION['search_results'])) {
         &copy; <?php echo date("Y"); ?> My PHP Project. All rights reserved.
     </footer>
     <script src="script/action.js"></script>
+    <script src="script/notification.js"></script>
 </body>
 
 </html>
