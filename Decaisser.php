@@ -1,5 +1,6 @@
 <?php
-require __DIR__ . '/init.php';
+require 'shield.php';
+// require __DIR__ . '/init.php';
 include_once 'crud/sortie.php';
 $pageTitle = "Decaissement";
 
@@ -93,6 +94,7 @@ if (isset($_SESSION['search_results'])) {
 
             <button id="ajout-btn" type="button" class="normal-btn"
                 style="margin-left:auto; background-color:#3b4a6b;">Ajouter</button>
+                <!-- <i class="ti ti-circle-plus"></i> -->
         </div>
     </header>
 
@@ -139,11 +141,11 @@ if (isset($_SESSION['search_results'])) {
     <div id="pop-up-form" class="centered-modal" style="display: none;">
         <div class="wrapper">
             <div class="window-decoration">
-                <button id="btn-close" class="close-btn" type="button" style="margin-bottom: 0;">
+                <h4 class="form-title" style="margin-left: auto;">Completer le formulaire</h4>
+                <button id="btn-close" class="close-btn" type="button">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <h4 class="form-title">Completer le formulaire</h4>
             <hr>
             <form class="form-container" method="POST" action="" autocomplete="off">
                 <input id="_method" type="hidden" name="_method">

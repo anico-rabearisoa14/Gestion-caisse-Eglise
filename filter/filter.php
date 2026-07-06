@@ -1,7 +1,6 @@
 <?php
-
 require_once __DIR__ . '/../db/databasehelper.php';
-require __DIR__ . '/../init.php';
+// require __DIR__ . '/../init.php';
 
 function handleFilter($category, $dateBegin, $dateEnd): ?array
 {

@@ -1,11 +1,12 @@
 <?php
-require __DIR__ . '/init.php';
+require 'shield.php';
+// require __DIR__ . '/init.php';
 $pageTitle = "Filtre mouvement";
 
 $data = [];
 $totalMontant = 0;
 
-$show_message = $_SESSION['show_message'] ?? 'false'; 
+$show_message = $_SESSION['show_message'] ?? 'false';
 $message_type = $_SESSION['message_type'] ?? '';
 $message_body = $_SESSION['message_body'] ?? '';
 
@@ -104,7 +105,7 @@ if (isset($_SESSION['filtered-data'])) {
             </form>
 
             <p>Entre <span id="begin"><?php echo htmlspecialchars($dateBegin ?? ''); ?></span>
-             et <span id="end"><?php echo htmlspecialchars($dateEnd ?? ''); ?></span></p>
+                et <span id="end"><?php echo htmlspecialchars($dateEnd ?? ''); ?></span></p>
             <table id="data-table" border="1" class="filtered-data-table">
                 <thead style="position: sticky; top:173px">
                     <tr>
@@ -161,7 +162,6 @@ if (isset($_SESSION['filtered-data'])) {
     </footer>
     <!-- <script src="script/utilities.js"></script> -->
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
             const category = "<?php echo htmlspecialchars($category ?? false); ?>";
             const dateBegin = "<?php echo htmlspecialchars($dateBegin ?? false); ?>";
@@ -171,7 +171,7 @@ if (isset($_SESSION['filtered-data'])) {
             // Show toast based on state
             if (!canPrint) {
                 toast('Veuillez faire une filtre avant d\'imprimer', 'warning');
-           }
+            }
 
             // Update UI state
             const btn = document.querySelector('.button-imprimer button[type="submit"]');
@@ -181,7 +181,7 @@ if (isset($_SESSION['filtered-data'])) {
                 btn.style.cursor = canPrint ? 'pointer' : 'not-allowed';
             }
         });
-
     </script>
 </body>
+
 </html>

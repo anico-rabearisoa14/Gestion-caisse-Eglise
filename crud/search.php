@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../db/databasehelper.php';
-require __DIR__ . '/../init.php';
+// require __DIR__ . '/../init.php';
 
  // function to handle the search
 function searchEntre(string $query, string $category): array

@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../db/databasehelper.php';
-require __DIR__ . '/../init.php';
+// require __DIR__ . '/../init.php';
 
 function getTotalAmount()
 {
@@ -122,7 +122,7 @@ function supprimerEntre($id): array
         $montantEntre = $row['montantEntre'];
         $soldePrevu = getTotalAmount() - $montantEntre;
 
-        if ($soldePrevu < 10000) {
+        if ($soldePrevu < 0) {
             return [
                 'success' => false,
                 'status' => 'error',

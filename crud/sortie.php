@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../db/databasehelper.php';
-require __DIR__ . '/../init.php';
+// require __DIR__ . '/../init.php';
 
 function getTotalAmount()
 {
@@ -84,7 +84,6 @@ function listeInfoSortie(): ?array
 function misAJourSortie($id, $ideglise, $motif, $ancienMontant, $montantSortie, $dateSortie): array
 {
     global $pdo;
-
     $soldeActuel = getTotalAmount();
     $soldePrevu = $soldeActuel + $ancienMontant - $montantSortie;
 
@@ -95,7 +94,6 @@ function misAJourSortie($id, $ideglise, $motif, $ancienMontant, $montantSortie, 
             'message' => 'Échec, le solde deviendrait insuffisant (' . $soldePrevu . ' Ar < 10 000 Ar)'
         ];
     }
-
     try {
         $sql = 'UPDATE sortie
                 SET ideglise      = :ideglise,

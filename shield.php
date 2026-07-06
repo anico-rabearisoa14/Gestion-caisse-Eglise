@@ -3,9 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/crud/eglise.php';
-
 if (!isset($_SESSION['ID_EGLISE'])) {
-    listeInfoEglise();
+    header('Location: index.php');
+    exit();
 }
 ?>

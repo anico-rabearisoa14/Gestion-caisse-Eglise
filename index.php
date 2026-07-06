@@ -18,29 +18,30 @@ function setSessionMessage(string $type, string $body): void
     $_SESSION['message_body'] = $body;
 }
 
-
 // check if there is an Eglise
 require_once 'crud/eglise.php';
 if ($info = listeInfoEglise()) {
     $contientUne = true;
+    $bilanEntre  = getAllBilanEntre();
+    $bilanSortie = getAllBilanSortie();
+    $entreData  = $bilanEntre['data'];
+    $sortieData = $bilanSortie['data'];
 } else {
     $contientUne = false;
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-
     if ($_POST['_method'] == 'DELETE') {
         $result = supprimerEglise(trim($_POST['id-to-delete']));
         setSessionMessage(
-                $result['success'] ? 'success' : 'error',
-                $result['message']
-            );
-    }
-    elseif($_POST['_method'] == 'UPDATE') {
-    
-    }
-    else{
+            $result['success'] ? 'success' : 'error',
+            $result['message']
+        );
+    } elseif ($_POST['_method'] == 'UPDATE') {
+        $result = misAJourEglise($_POST['id-to-edit'] ,$_POST['new-name']);
+        setSessionMessage($result['success'] ? 'success' : 'error' , $result['message']);
+    } else {
         $id = $_POST['ideglise'];
         $design = $_POST['Design'];
         $result = createEglise($id, $design, 0);
@@ -54,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit();
 }
+
 $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
 ?>
 
@@ -75,13 +77,13 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
     <?php include 'includes/nav.php'; ?>
     <header>
         <h1><?php echo htmlspecialchars($contientUne ?
-                'Les renseignements de votre Eglise' : 'Ajouter une eglise') ?></h1>
+                'Les renseignements de votre Église' : 'Ajouter une eglise') ?></h1>
     </header>
 
     <!--  afficher le formulaire si il n'y a pas d'eglise -->
     <div class="wrapper"
         style="display: <?php echo htmlspecialchars($contientUne ? 'none' : 'block') ?>;">
-        <h4 class="form-title">Completer le form </h4>
+        <h4 class="form-title">Completer les informations</h4>
         <hr>
         <form class="form-container" method="POST" action="">
             <label for="ideglise">ID Eglise</label>
@@ -100,17 +102,23 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
         <div class="form-container">
             <ul class="info-liste">
                 <li><b>ID : </b> <span id="id-eglise"><?php echo htmlspecialchars($info['ideglise']) ?></span></li>
-                <li><b>Design:</b> <?php echo htmlspecialchars($info['Design']) ?></li>
+                <li><b>Design:</b> <span id="nom-eglise"><?php echo htmlspecialchars($info['Design']) ?></span></li>
                 <li><b>Solde:</b> <?php echo htmlspecialchars($formatter->formatCurrency($info['Solde'], 'MGA')) ?><span></span></li>
             </ul>
         </div>
         <!--  -->
         <div class="button-layout" style="display: flex; justify-content:end">
             <button id="editerEglise" style="width: fit-content;"
-                aria-label="Editer l'eglise" title="Editer l'eglise"><i class="fa-solid fa-pencil"></i></button>
+                aria-label="Editer l'eglise" title="Editer le nom l'eglise"><i class="fa-solid fa-pencil"></i></button>
             <button id="deleteEglise" style="width: fit-content; color:#ef4444cc;"
                 aria-label="Supprimer l'eglise" title="Supprimer l'eglise"><i class="fa-solid fa-trash-can"></i></button>
         </div>
+
+    </div>
+    <div style="height: 400px;
+            max-width: 700px;
+            margin: 0 auto;">
+        <canvas id="myChart"></canvas>
     </div>
 
     <!-- confirmation de suppression  -->
@@ -129,18 +137,40 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
         </div>
     </form>
 
-    <!-- conserver les messages apres cahque actions -->
+    <!-- conserver les messages apres chaque actions -->
     <div class="message-box success-box" style="display: none">
         <input id="message-toogle" type="hidden" value="<?php echo htmlspecialchars($show_message) ?>">
         <input id="message-to-show-type" type="hidden" value="<?php echo htmlspecialchars($message_type ?: ''); ?>">
         <input id="message-to-show-body" type="hidden" value="<?php echo htmlspecialchars($message_body ?: ''); ?>">
     </div>
 
+    <!-- editer -->
+    <div id="edit-form" class="centered-modal" style="display: none;">
+        <div class="wrapper">
+            <div class="window-decoration">
+                <h4 class="form-title" style="margin-left: auto;">Editer le nom de l'eglise</h4>
+                <button id="btn-close" class="close-btn" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <hr>
+            <form method="POST" class="form-container" action="" autocomplete="off">
+                <input type="hidden" name="_method" value="UPDATE">
+                <input type="hidden" name="id-to-edit" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']) ?>">
+                <label for="new-name">Nouveau nom :</label>
+                <input type="text" name="new-name">
+                <button type="submit" class="submit-btn">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
     <footer>
         &copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($projectName); ?>. All rights reserved.
     </footer>
-    
+     
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // handle delete button action
         document.getElementById('deleteEglise').addEventListener('click', function() {
             const id = document.getElementById('id-eglise').textContent;
             console.log(id);
@@ -153,6 +183,69 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
             document.getElementById('pop-up-confirm').style.display = 'none';
         });
 
+        // handle update button action
+        document.getElementById('editerEglise').addEventListener('click', function() {
+            const oldName = document.getElementById('nom-eglise').textContent;
+            document.getElementsByName('new-name')[0].value = oldName;
+            document.getElementById('edit-form').style.display = '';
+        });
+
+        document.getElementById('btn-close').addEventListener('click', function() {
+            document.getElementById('edit-form').style.display = 'none';
+        });
+
+        // 
+
+        
+        const ctx = document.getElementById('myChart');
+
+        const entreData  = <?= json_encode($entreData) ?>;
+        const sortieData = <?= json_encode($sortieData) ?>;
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Janvier ', 'Février ', 'Mars ', 'Avril', 'Mai', 'Juin' , 'Juillet' , 'Août ' , 'Semptembre' , 'Octobre' , 'Novembre' , 'Decembre'],
+                datasets: [
+                    {
+                        label: 'Entre',
+                        data: entreData, 
+                        // [12, 19, 3, 5, 2, 3 ,12, 19, 3, 5, 2, 3],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1,
+                        borderRadius: 10
+                    },
+                    {
+                        label: 'Sortie',
+                        data: sortieData,
+                        // [8, 14, 9, 12, 6, 15,8,14, 9, 12, 6, 15],
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 1,
+                        borderRadius: 10
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Visualisation  mensuel du mouvement de caisse (unité Ar) '
+                    }
+                }
+            }
+        });
     </script>
     <script src="script/notification.js"></script>
 </body>

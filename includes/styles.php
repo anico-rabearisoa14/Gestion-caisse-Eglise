@@ -164,26 +164,15 @@
     }
 
     .close-btn {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background-color: #cf1d1d;
-        color: white;
+        width: fit-content;
+        color: #18233b;
+        padding:3px ;
+        margin-left:auto ;
+        align-self: center;
+        font-size: 1.2rem;
         border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        /* box-shadow: 2px 2px 6px #27262669; */
-
+        border-radius: 30%;
     }
-
-    .close-btn:hover {
-        background-color: #bd2929;
-        transform: scale(.85);
-        /* transform: rotate(20deg); */
-    }
-
 
     .normal-btn {
         padding: 6px;
@@ -216,7 +205,7 @@
 
     hr {
         margin-bottom: 25px;
-        height: 2px;
+        height: 1px;
         border: none;
         border-radius: 9px;
         background-color: #2c3e50;
@@ -246,10 +235,10 @@
 
     .window-decoration {
         display: flex;
-        justify-content: flex-end;
-        border: 1px soilid;
+        justify-content: center;
+        /* border: 1px solid #2c3e50; */
+        border-radius: 8px;
     }
-
 
     /* styles for all the tables */
     .data-table {

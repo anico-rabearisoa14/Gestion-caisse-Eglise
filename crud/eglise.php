@@ -1,6 +1,5 @@
 <?php
 require __DIR__ . '/../db/databasehelper.php';
-require __DIR__ . '/../init.php';
 
 // listeInfoEglise();
 // EGLISE
@@ -32,7 +31,6 @@ function listeInfoEglise(): ?array
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $rows = $stmt->fetch(PDO::FETCH_ASSOC);
-
         if ($rows !== false) {
             $_SESSION['ID_EGLISE'] = $rows['ideglise'];
             return $rows;
@@ -46,15 +44,109 @@ function listeInfoEglise(): ?array
     }
 }
 
+function getAllBilanEntre(): array
+{
+    global $pdo;
+
+    if (!isset($_SESSION['ID_EGLISE'])) {
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Aucune église trouvée',
+            'data' => []
+        ];
+    }
+
+    try {
+        $sql = "SELECT 
+            MONTH(dateEntre) AS mo, 
+            SUM(montantEntre) AS total_entre
+            FROM ENTRE 
+            WHERE ideglise = :ideglise AND YEAR(dateEntre) = YEAR(CURDATE())
+            GROUP BY MONTH(dateEntre)";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':ideglise' => $_SESSION['ID_EGLISE']]);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        $data = [];
+        for ($mo = 1; $mo <= 12; $mo++) {
+            $data[] = isset($rows[$mo]) ? (int) $rows[$mo] : 0;
+        }
+
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => '',
+            'data' => $data
+        ];
+    } catch (PDOException $e) {
+        error_log('getAllBilanEntre error: ' . $e->getMessage());
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Erreur de chargement de graphique',
+            'data' => []
+        ];
+    }
+}
+
+function getAllBilanSortie(): array
+{
+    global $pdo;
+
+    if (!isset($_SESSION['ID_EGLISE'])) {
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Aucune église trouvée',
+            'data' => []
+        ];
+    }
+
+    try {
+        $sql = "SELECT 
+            MONTH(dateSortie) AS mo, 
+            SUM(montantSortie) AS total_sortie
+            FROM SORTIE 
+            WHERE ideglise = :ideglise AND YEAR(dateSortie) = YEAR(CURDATE())
+            GROUP BY MONTH(dateSortie)";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':ideglise' => $_SESSION['ID_EGLISE']]);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        $data = [];
+        for ($mo = 1; $mo <= 12; $mo++) {
+            $data[] = isset($rows[$mo]) ? (int) $rows[$mo] : 0;
+        }
+
+        return [
+            'success' => true,
+            'status' => 'success',
+            'message' => '',
+            'data' => $data
+        ];
+    } catch (PDOException $e) {
+        error_log('getAllBilanSortie error: ' . $e->getMessage());
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Erreur de chargement de graphique',
+            'data' => []
+        ];
+    }
+}
+
 function misAJourEglise($ideglise, $Design): array
 {
     global $pdo;
     try {
-        $sql = 'UPDATE eglise
-                SET Design = :design,
-                WHERE ideglise = :id';
+        $sql = 'UPDATE eglise SET Design =:design WHERE ideglise =:id';
         $stmt = $pdo->prepare($sql);
-        if (!$stmt->execute([':id' => $ideglise, ':design' => $Design])) {
+        if (!$stmt->execute([':design' => $Design, ':id' => $ideglise])) {
             return [
                 'success' => false,
                 'status' => 'error',
@@ -77,7 +169,7 @@ function misAJourEglise($ideglise, $Design): array
         return [
             'success' => false,
             'status' => 'error',
-            'message' => 'Erreur de mise à jour : ' . $e->getMessage()
+            'message' => 'Erreur de mise à jour'
         ];
     }
 }
@@ -85,7 +177,6 @@ function misAJourEglise($ideglise, $Design): array
 function supprimerEglise($ideglise): array
 {
     global $pdo;
-
     //  delete all the informations linked to the table
     $sql = 'TRUNCATE entre;';
     $stmt = $pdo->prepare($sql);
@@ -133,6 +224,7 @@ function supprimerEglise($ideglise): array
 function searchEglise(string $query): array
 {
     global $pdo;
+
     $stmt = $pdo->prepare("SELECT * FROM eglise WHERE Design LIKE :query");
     $stmt->execute([':query' => '%' . $query . '%']);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);

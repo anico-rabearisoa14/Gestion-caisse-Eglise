@@ -93,7 +93,6 @@ document.getElementById('data-table').addEventListener('click', function (e) {
         document.getElementsByName('date-operation')[0].value = date;
         console.log('Edit row:', id);
         console.log(id, ideglise, motif, montant, date);
-
     }
 });
 
