@@ -1,18 +1,26 @@
 <?php
 require 'shield.php';
-// require __DIR__ . '/init.php';
-$pageTitle = "Filtre mouvement";
+$projectName = 'GestionCaisseEglise';
+$pageTitle = "Mouvement de caisse";
 
-$data = [];
-$totalMontant = 0;
+// Create an immutable date object
+$now_date = date('Y-m-d');
+$date = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+// Minus 10 days (returns a new object)
+$newDate = $date->modify('-1 month');
+
+$data1 = [];
+$data2 = [];
+$totalMontant1 = 0;
+$totalMontant2 = 0;
 
 $show_message = $_SESSION['show_message'] ?? 'false';
-$message_type = $_SESSION['message_type'] ?? '';
-$message_body = $_SESSION['message_body'] ?? '';
+$message_type = $_SESSION['message_type'] ?? 'info';
+$message_body = $_SESSION['filter-message'] ?? 'not reached';
 
 unset($_SESSION['show_message']);
 unset($_SESSION['message_type']);
-unset($_SESSION['message_body']);
+unset($_SESSION['filter-message']);
 
 //  handle variables for printing 
 $canPrint = false;
@@ -23,18 +31,21 @@ $dateEnd   = null;
 $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
 
 // get the values of the filter from the database
-if (isset($_SESSION['filtered-data'])) {
-    $data = $_SESSION['filtered-data'];
-    $totalMontant = $_SESSION['filtered-total'];
+if (isset($_SESSION['filtered-data-sortie'])) {
+    $data1 = $_SESSION['filtered-data-sortie'];
+    $data2 = $_SESSION['filtered-data-entre'];
 
-    $category  = $_SESSION['requested-category-to-print'] ?? null;
-    $dateBegin = $_SESSION['requested-begin-date-to-print'] ?? null;
-    $dateEnd   = $_SESSION['requested-end-date-to-print'] ?? null;
-    $canPrint  = ($category && $dateBegin && $dateEnd);
+    $totalMontant1 = $_SESSION['filtered-total-entre'];
+    $totalMontant2 = $_SESSION['filtered-total-sortie'];
 
-    // remove the variables from the session
-    unset($_SESSION['filtered-data']);
-    unset($_SESSION['filtered-total']);
+    $dateBegin = $_SESSION['requested-begin-date-to-print'];
+    $dateEnd   = $_SESSION['requested-end-date-to-print'];
+    $canPrint  = true;
+
+    unset($_SESSION['filtered-data-sortie'], $_SESSION['filtered-data-entre']);
+    unset($_SESSION['requested-category-to-print']);
+    unset($_SESSION['requested-begin-date-to-print']);
+    unset($_SESSION['requested-end-date-to-print']);
 }
 
 ?>
@@ -54,60 +65,57 @@ if (isset($_SESSION['filtered-data'])) {
 
     <?php include 'includes/nav.php'; ?>
     <header>
+        <h1><?php echo htmlspecialchars($pageTitle); ?></h1>
         <h1><span class="state"></span></h1>
     </header>
 
     <div id="container">
 
         <!-- get all input and submit to make the filter -->
-        <form id="TriggerOnPageLoad" method="GET" action="filter/filter.php" class="main-form-wrapper">
-            <div id="select-area">
-                <label for="to-filter">Filtrer une </label>
-                <select id="to-filter" name="to-filter" required>
-                    <option value="" disabled selected>Choisir</option>
-                    <option value="sortie">Sortie</option>
-                    <option value="entre">Entrée</option>
-                </select>
-            </div>
+        <form id="TriggerOnPageLoad" method="GET"
+            action="filtrer_une_mouvement/filter.php" class="main-form-wrapper">
 
             <label for="date-begin">du </label>
             <input type="date" id="date-begin" class="date-begin" name="date-begin"
-                value="<?php echo htmlspecialchars($dateBegin ?: date('y-m-d')) ?>" required>
+                value="<?php echo htmlspecialchars($dateBegin) ?: $newDate->format('Y-m-d') ?>" required>
 
             <label for="date-end">jusqu'au </label>
             <input type="date" id="date-end" class="date-end" name="date-end"
-                value="<?php echo htmlspecialchars($dateEnd ?: date('y-m-d')) ?>" required>
+                value="<?php echo htmlspecialchars($dateEnd ?: date('Y-m-d')) ?>" required>
 
-            <div class="button-layout" style="margin-top: 15px;">
-                <button class="submit-btn" type="submit">Demander</button>
+            <div class="button-layout" style="align-self:flex-start; margin-left:auto;">
+                <!-- margin-top: 15px; -->
+                <button class="submit-btn" type="submit" style="margin:0">Demander</button>
             </div>
         </form>
 
         <!-- afficher le resultat d'une mouvement -->
         <div class="reponse-filtre">
 
+            <!-- boutton imprimer -->
             <form method="GET" action="print.php">
-                <input type="hidden" name="_category"
-                    value="<?php echo htmlspecialchars($category ?? ''); ?>">
+                <div> <input type="hidden" name="date-to-print-begin"
+                        value="<?php echo htmlspecialchars($dateBegin ?? ''); ?>">
 
-                <input type="hidden" name="date-to-print-begin"
-                    value="<?php echo htmlspecialchars($dateBegin ?? ''); ?>">
+                    <input type="hidden" name="date-to-print-end"
+                        value="<?php echo htmlspecialchars($dateEnd ?? ''); ?>">
+                </div>
 
-                <input type="hidden" name="date-to-print-end"
-                    value="<?php echo htmlspecialchars($dateEnd ?? ''); ?>">
-
-                <button type="submit"
-                    class="normal-btn"
-                    <?php echo !$canPrint ? 'disabled' : ''; ?>
+                <button type="submit" class="normal-btn"
                     style="background-color:transparent ;border:1px solid #3b4a6b ;width:fit-content ;color:#000e2c;
                    <?php echo !$canPrint ? 'opacity:0.4; cursor:not-allowed;' : ''; ?>">
                     Imprimer</button>
             </form>
 
-            <p>Entre <span id="begin"><?php echo htmlspecialchars($dateBegin ?? ''); ?></span>
-                et <span id="end"><?php echo htmlspecialchars($dateEnd ?? ''); ?></span></p>
+            <!-- -->
+            <p style="margin: 12px 1px;">Mouvement de caisse entre <span id="begin"><?php echo htmlspecialchars($dateBegin ?? 'N?A'); ?></span>
+                et <span id="end"><?php echo htmlspecialchars($dateEnd ?? 'N?A'); ?></span></p>
+            <hr>
+            <!-- pour entrée -->
+
+            <p>Mouvement d’entrée en caisse</p>
             <table id="data-table" border="1" class="filtered-data-table">
-                <thead style="position: sticky; top:173px">
+                <thead>
                     <tr>
                         <th style="min-width:85px; width:200px">Date <span><?php echo htmlspecialchars($category ?? ''); ?></span></th>
                         <th style="min-width:100px; width:300px;">Motif</th>
@@ -116,18 +124,60 @@ if (isset($_SESSION['filtered-data'])) {
                 </thead>
                 <tbody>
 
-                    <?php if ($data): ?>
-                        <?php foreach ($data as $d): ?>
-                            <td><?php echo htmlspecialchars($d['date']) ?></td>
-                            <td><?php echo htmlspecialchars($d['motif']) ?></td>
-                            <td style="text-align: end;">
-                                <?php echo htmlspecialchars($formatter->formatCurrency($d['montant'], 'MGA')); ?>
-                            </td>
+                    <?php if ($data1): ?>
+                        <?php foreach ($data1 as $d): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($d['date']) ?></td>
+                                <td><?php echo htmlspecialchars($d['motif']) ?></td>
+                                <td style="text-align: end;">
+                                    <?php echo htmlspecialchars($formatter->formatCurrency($d['montant'], 'MGA')); ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" style="text-align: center;">Faire une filtre</td>
+                            <td colspan="3" style="text-align: center;">Faire une filtre</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+            <div class="button-imprimer" style="display: flex; justify-content:space-between">
+                <p id="montant-total">
+                    <b>Total Montant
+                        <span id="flux">entrant</span> :
+                        <span id="total-value">
+                            <?php echo htmlspecialchars($formatter->formatCurrency($totalMontant1, 'MGA')) ?>
+                        </span>
+                    </b>
+                </p>
+            </div>
+
+            <!-- pour sortie -->
+            <br>
+            <p>Mouvement de sortie de caisse</p>
+            <table id="data-table" border="1" class="filtered-data-table">
+                <thead>
+                    <tr>
+                        <th style="min-width:85px; width:200px">Date <span><?php echo htmlspecialchars($category ?? ''); ?></span></th>
+                        <th style="min-width:100px; width:300px;">Motif</th>
+                        <th style="max-width:300px; width:250px; min-width:90px">Montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <?php if ($data2): ?>
+                        <?php foreach ($data2 as $d): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($d['date']) ?></td>
+                                <td><?php echo htmlspecialchars($d['motif']) ?></td>
+                                <td style="text-align: end;">
+                                    <?php echo htmlspecialchars($formatter->formatCurrency($d['montant'], 'MGA')); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="3" style="text-align: center;">Faire une filtre</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -138,7 +188,7 @@ if (isset($_SESSION['filtered-data'])) {
                     <b>Total Montant
                         <span id="flux">sortant</span> :
                         <span id="total-value">
-                            <?php echo htmlspecialchars($formatter->formatCurrency($totalMontant, 'MGA')) ?>
+                            <?php echo htmlspecialchars($formatter->formatCurrency($totalMontant2, 'MGA')) ?>
                         </span>
                     </b>
                 </p>
@@ -158,23 +208,29 @@ if (isset($_SESSION['filtered-data'])) {
     </div>
 
     <footer>
-        &copy; <?php echo date("Y"); ?> My PHP Project. All rights reserved.
+        &copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($projectName); ?>. All rights reserved.
     </footer>
-    <!-- <script src="script/utilities.js"></script> -->
+
+    <script src="script/notification.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const category = "<?php echo htmlspecialchars($category ?? false); ?>";
-            const dateBegin = "<?php echo htmlspecialchars($dateBegin ?? false); ?>";
-            const dateEnd = "<?php echo htmlspecialchars($dateEnd ?? false); ?>";
-            const canPrint = category && dateBegin && dateEnd;
+            const category = "<?php echo htmlspecialchars($category ?: ''); ?>";
+            const dateBegin = "<?php echo htmlspecialchars($dateBegin ?: ''); ?>";
+            const dateEnd = "<?php echo htmlspecialchars($dateEnd ?: ''); ?>";
+            const canPrint = dateBegin !== '' && dateEnd !== '';
 
             // Show toast based on state
             if (!canPrint) {
-                toast('Veuillez faire une filtre avant d\'imprimer', 'warning');
+                toast('Veuillez faire une filtre pour imprimer', 'warning');
+            } else {
+                console.log(category);
+                console.log(dateBegin);
+                console.log(dateEnd);
+                console.log(canPrint);
             }
 
-            // Update UI state
-            const btn = document.querySelector('.button-imprimer button[type="submit"]');
+            // Update UI state (button lives inside .reponse-filtre form, not .button-imprimer)
+            const btn = document.querySelector('.reponse-filtre form button[type="submit"]');
             if (btn) {
                 btn.disabled = !canPrint;
                 btn.style.opacity = canPrint ? '1' : '0.4';

@@ -1,7 +1,6 @@
 <?php
 require __DIR__ . '/init.php';
-$currentDate = date("F j, Y");
-$projectName = 'GestionEglise';
+$projectName = 'GestionCaisseEglise';
 $pageTitle = 'Acceuil';
 
 $show_message = $_SESSION['show_message'] ?? 'false';
@@ -39,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result['message']
         );
     } elseif ($_POST['_method'] == 'UPDATE') {
-        $result = misAJourEglise($_POST['id-to-edit'] ,$_POST['new-name']);
-        setSessionMessage($result['success'] ? 'success' : 'error' , $result['message']);
+        $result = misAJourEglise($_POST['id-to-edit'], $_POST['new-name']);
+        setSessionMessage($result['success'] ? 'success' : 'error', $result['message']);
     } else {
         $id = $_POST['ideglise'];
         $design = $_POST['Design'];
@@ -106,6 +105,7 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
                 <li><b>Solde:</b> <?php echo htmlspecialchars($formatter->formatCurrency($info['Solde'], 'MGA')) ?><span></span></li>
             </ul>
         </div>
+
         <!--  -->
         <div class="button-layout" style="display: flex; justify-content:end">
             <button id="editerEglise" style="width: fit-content;"
@@ -115,8 +115,8 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
         </div>
 
     </div>
-    <div style="height: 400px;
-            max-width: 700px;
+    <div style="height:400px;
+            max-width:700px;
             margin: 0 auto;">
         <canvas id="myChart"></canvas>
     </div>
@@ -144,7 +144,7 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
         <input id="message-to-show-body" type="hidden" value="<?php echo htmlspecialchars($message_body ?: ''); ?>">
     </div>
 
-    <!-- editer -->
+    <!-- editer formulaire -->
     <div id="edit-form" class="centered-modal" style="display: none;">
         <div class="wrapper">
             <div class="window-decoration">
@@ -164,10 +164,22 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
         </div>
     </div>
 
+    <!-- button pour ajouter une nouvel eglise  -->
+    <div class="main-add-button" style=" display: <?php echo htmlspecialchars($contientUne ? 'block' : 'none') ?>;position: fixed; bottom:90px ; right:40px">
+        <button class="normal-btn" type="button" title="ajouter une nouvelle eglise"
+            style="display:flex; 
+            justify-content:center;
+            align-items:center;
+            padding:0px;
+            font-size: 2rem; border-radius:60% ;width:50px;height:50px ; font-weight:bold">
+            <i class="ti ti-plus"></i>
+        </button>
+    </div>
+
     <footer>
         &copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($projectName); ?>. All rights reserved.
     </footer>
-     
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // handle delete button action
@@ -194,22 +206,20 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
             document.getElementById('edit-form').style.display = 'none';
         });
 
-        // 
 
-        
+        // here to handle the statistic graph  
         const ctx = document.getElementById('myChart');
-
-        const entreData  = <?= json_encode($entreData) ?>;
+        const entreData = <?= json_encode($entreData) ?>;
         const sortieData = <?= json_encode($sortieData) ?>;
-        
+        const graphTitle = 'Visualisation  mensuel du mouvement de caisse\n (unité Ar)';
+
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Janvier ', 'Février ', 'Mars ', 'Avril', 'Mai', 'Juin' , 'Juillet' , 'Août ' , 'Semptembre' , 'Octobre' , 'Novembre' , 'Decembre'],
-                datasets: [
-                    {
+                labels: ['Janvier ', 'Février ', 'Mars ', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août ', 'Semptembre', 'Octobre', 'Novembre', 'Decembre'],
+                datasets: [{
                         label: 'Entre',
-                        data: entreData, 
+                        data: entreData,
                         // [12, 19, 3, 5, 2, 3 ,12, 19, 3, 5, 2, 3],
                         backgroundColor: 'rgba(54, 162, 235, 0.6)',
                         borderColor: 'rgb(54, 162, 235)',
@@ -241,7 +251,7 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
                     },
                     title: {
                         display: true,
-                        text: 'Visualisation  mensuel du mouvement de caisse (unité Ar) '
+                        text: graphTitle
                     }
                 }
             }

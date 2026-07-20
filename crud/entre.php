@@ -80,7 +80,7 @@ function misAJourEntre($id, $ideglise, $motif, $ancienMontant, $montantEntre, $d
 
     try {
         $sql = 'UPDATE entre
-            SET ideglise     = :ideglise,
+            SET
                 motif        = :motif,
                 montantEntre = :montantEntre,
                 dateEntre    = :dateEntre
@@ -88,7 +88,6 @@ function misAJourEntre($id, $ideglise, $motif, $ancienMontant, $montantEntre, $d
         $stmt = $pdo->prepare($sql);
         if (!$stmt->execute([
             ':id'           => $id,
-            ':ideglise'     => $ideglise,
             ':motif'        => $motif,
             ':montantEntre' => $montantEntre,
             ':dateEntre'    => $dateEntre,

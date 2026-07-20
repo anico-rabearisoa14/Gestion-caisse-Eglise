@@ -1,7 +1,7 @@
 <?php
 require 'shield.php';
-// require __DIR__ . '/init.php';
 include_once 'crud/entre.php';
+$projectName = 'GestionCaisseEglise';
 $pageTitle = "Encaissement";
 
 $show_message = $_SESSION['show_message'] ?? 'false';
@@ -98,7 +98,7 @@ if (isset($_SESSION['search_results'])) {
             </form>
 
             <button id="ajout-btn" type="button" class="normal-btn"
-                style="margin-left:auto; background-color:#3b4a6b;">Ajouter</button>
+                style="margin-left:auto; background-color:#3b4a6b;"> <i class="ti ti-plus"></i> Ajouter</button>
             <!-- <i class="ti ti-circle-plus"></i> -->
         </div>
     </header>
@@ -155,8 +155,8 @@ if (isset($_SESSION['search_results'])) {
             <form class="form-container" method="POST" action="" autocomplete="off">
                 <input id="_method" type="hidden" name="_method">
                 <input type="hidden" id="id-record" name="id-record">
-                <label for="ideglise">ID Eglise</label>
-                <input type="text" name="ideglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" readonly required>
+                <!-- <label for="ideglise">ID Eglise</label> -->
+                <input type="hidden" name="ideglise" disabled class="id-eglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" readonly required>
 
                 <label for="motif">Motif</label>
                 <input type="text" name="motif" required>
@@ -175,7 +175,7 @@ if (isset($_SESSION['search_results'])) {
 
     <form id="pop-up-confirm" method="POST" action="" class="centered-modal" style="display: none;">
         <div class="wrapper">
-            <div class="action-title">Etes vous sur de supprimer</div>
+            <div class="action-title">Êtes-vous sûr de supprimer ?</div>
             <div class="button-layout">
                 <input type="hidden" name="_method" value="DELETE">
                 <input type="hidden" name="id-to-delete">
@@ -192,8 +192,9 @@ if (isset($_SESSION['search_results'])) {
     </div>
 
     <footer>
-        &copy; <?php echo date("Y"); ?> My PHP Project. All rights reserved.
+        &copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($projectName); ?>. All rights reserved.
     </footer>
+
     <script src="script/action.js"></script>
     <script src="script/notification.js"></script>
 </body>

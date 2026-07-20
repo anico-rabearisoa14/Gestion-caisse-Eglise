@@ -126,7 +126,7 @@ function getAllBilanSortie(): array
         return [
             'success' => true,
             'status' => 'success',
-            'message' => '',
+            'message' => 'Data fetched successfully',
             'data' => $data
         ];
     } catch (PDOException $e) {

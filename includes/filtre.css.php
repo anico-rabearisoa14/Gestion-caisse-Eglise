@@ -23,33 +23,28 @@ p{ font-size: var(--text-sm);}
         background-color: #ffffff;
         border-radius: 8px;
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
+        align-items: stretch;
         gap: 10px;
     }
 
-    @media screen and (max-width: 690px) {
-        #container {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .main-form-wrapper {
-            max-width: 100%;
-        }
+    @media only screen and (max-width: 600px) {
+        
     }
+
 
     /* ─── Filter Panel  */
     .main-form-wrapper {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: stretch;
         gap: 10px;
         background-color: #ffffff;
-        border: 1px solid black;
-        border-left: 4px solid black;
         border-radius: 12px;
-        max-width: 435px;
+        max-width: 100%;
         max-height: 345px;
         padding: 4px 10px;
     }
@@ -57,6 +52,7 @@ p{ font-size: var(--text-sm);}
     .reponse-filtre {
         border: 1px solid black;
         border-right: 4px solid black;
+        border-left: 4px solid black;
         border-radius: 12px;
         padding: 15px;
     }
@@ -117,7 +113,7 @@ p{ font-size: var(--text-sm);}
     /* ─── Button  */
     .button-layout {
         display: flex;
-        justify-content: center;
+        /* justify-content: center; */
     }
 
     /* ─── Results Table  */
@@ -145,5 +141,8 @@ p{ font-size: var(--text-sm);}
     .success {
         color: #27ae60;
         margin-top: 10px;
+    }
+    #end , #begin {
+        text-decoration: underline;
     }
 </style>

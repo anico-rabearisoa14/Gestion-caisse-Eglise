@@ -96,7 +96,7 @@ function misAJourSortie($id, $ideglise, $motif, $ancienMontant, $montantSortie, 
     }
     try {
         $sql = 'UPDATE sortie
-                SET ideglise      = :ideglise,
+                SET
                     motif         = :motif,
                     montantSortie = :montantSortie,
                     dateSortie    = :dateSortie
@@ -105,7 +105,6 @@ function misAJourSortie($id, $ideglise, $motif, $ancienMontant, $montantSortie, 
         $stmt = $pdo->prepare($sql);
         if (!$stmt->execute([
             ':id'            => $id,
-            ':ideglise'      => $ideglise,
             ':motif'         => $motif,
             ':montantSortie' => $montantSortie,
             ':dateSortie'    => $dateSortie,

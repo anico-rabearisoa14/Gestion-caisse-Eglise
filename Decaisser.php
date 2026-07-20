@@ -1,8 +1,8 @@
 <?php
 require 'shield.php';
-// require __DIR__ . '/init.php';
 include_once 'crud/sortie.php';
-$pageTitle = "Decaissement";
+$projectName = 'GestionCaisseEglise';
+$pageTitle = "Décaissement ";
 
 $show_message = $_SESSION['show_message'] ?? 'false';
 $message_type = $_SESSION['message_type'] ?? '';
@@ -73,7 +73,7 @@ if (isset($_SESSION['search_results'])) {
 
     <?php include 'includes/nav.php'; ?>
     <header>
-        <h1>Liste des decaissements</h1>
+        <h1>Liste des décaissements </h1>
         <div class="button-container">
 
             <form class="search-bar" method="GET" action="crud/search.php" autocomplete="off">
@@ -93,11 +93,12 @@ if (isset($_SESSION['search_results'])) {
             </form>
 
             <button id="ajout-btn" type="button" class="normal-btn"
-                style="margin-left:auto; background-color:#3b4a6b;">Ajouter</button>
+                style="margin-left:auto; background-color:#3b4a6b;"> <i class="ti ti-plus"></i> Ajouter</button>
                 <!-- <i class="ti ti-circle-plus"></i> -->
         </div>
     </header>
 
+<!-- lister tous les donne dans la table SORTIE -->
     <table id="data-table" border="1" class="data-table">
         <thead style="position: sticky; top:179px">
             <tr>
@@ -138,6 +139,7 @@ if (isset($_SESSION['search_results'])) {
         </tbody>
     </table>
 
+<!--Ajouter ou modifier une enregistrement dans la table SORTIE -->
     <div id="pop-up-form" class="centered-modal" style="display: none;">
         <div class="wrapper">
             <div class="window-decoration">
@@ -150,10 +152,10 @@ if (isset($_SESSION['search_results'])) {
             <form class="form-container" method="POST" action="" autocomplete="off">
                 <input id="_method" type="hidden" name="_method">
                 <input type="hidden" id="id-record" name="id-record">
-                <label for="ideglise">ID Eglise</label>
-                <input type="text" name="ideglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" readonly required>
+                <!-- <label for="ideglise">ID Eglise</label> -->
+                <input type="hidden" name="ideglise" disabled class="id-eglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" readonly required>
 
-                <label for="motif">Motif du decaissement</label>
+                <label for="motif">Motif du décaissement</label>
                 <input type="text" name="motif" required>
 
                 <label for="montant">Montant a retirer</label>
@@ -168,9 +170,10 @@ if (isset($_SESSION['search_results'])) {
         </div>
     </div>
 
+    <!-- confirmation de suppression d'une enregistrement -->
     <form id="pop-up-confirm" method="POST" class="centered-modal" style="display: none;">
         <div class="wrapper">
-            <div class="action-title">Etes vous sur de supprimer</div>
+            <div class="action-title">Êtes-vous sûr de supprimer ?</div>
             <div class="button-layout">
                 <input type="hidden" name="_method" value="DELETE">
                 <input type="hidden" name="id-to-delete">
@@ -180,6 +183,8 @@ if (isset($_SESSION['search_results'])) {
         </div>
     </form>
 
+
+<!-- stocker les message viens des actions  -->
     <div class="message-box success-box" style="display: none">
         <input id="message-toogle"        type="hidden" value="<?php echo htmlspecialchars($show_message) ?>">
         <input id="message-to-show-type"  type="hidden" value="<?php echo htmlspecialchars($message_type ?: ''); ?>">
@@ -187,8 +192,9 @@ if (isset($_SESSION['search_results'])) {
     </div>
 
     <footer>
-        &copy; <?php echo date("Y"); ?> My PHP Project. All rights reserved.
+        &copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($projectName); ?>. All rights reserved.
     </footer>
+    
     <script src="script/action.js"></script>
     <script src="script/notification.js"></script>
 </body>

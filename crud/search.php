@@ -1,4 +1,5 @@
 <?php
+ require __DIR__ . '/../shield.php';
 require __DIR__ . '/../db/databasehelper.php';
 // require __DIR__ . '/../init.php';
 

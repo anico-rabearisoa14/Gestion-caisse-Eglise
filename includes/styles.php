@@ -57,7 +57,7 @@
         display: flex;
         justify-content: flex-start;
         gap: 30px;
-        padding: 12px 12px;
+        padding:12px;
         position: sticky;
         top: 0;
         z-index: 100;
@@ -164,14 +164,20 @@
     }
 
     .close-btn {
-        width: fit-content;
-        color: #18233b;
-        padding:3px ;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 25px;
+        height: 25px;
+        /* color: #18233b; */
+        color: white;
+        padding:8px;
         margin-left:auto ;
         align-self: center;
         font-size: 1.2rem;
         border: none;
-        border-radius: 30%;
+        border-radius: 50%;
+        background-color: #ef4444;
     }
 
     .normal-btn {
@@ -366,6 +372,7 @@
     gap: 8px;
     z-index: 9999999;
 }
+
 .toast {
     display: flex;
     align-items: center;
@@ -380,10 +387,21 @@
     transform: translateX(-20px);
     transition: opacity 0.2s, transform 0.3s;
 }
-.toast.show { opacity: 1; transform: translateX(0); }
+
+.toast.show { opacity: 1; transform: translateX(0);}
 .toast.success { border-left: 4px solid #22c55e; }
 .toast.error   { border-left: 4px solid #ef4444; }
 .toast.info    { border-left: 4px solid #3b82f6; }
 .toast.warning { border-left: 4px solid #f59e0b; }
 .toast-close   { cursor: pointer; margin-left: auto; }
+
+.id-eglise{
+    border: none; 
+    background-color:#ffffff;
+    border-bottom: 1px solid #1b2c52;
+    box-shadow: -4px 0px 0px #1b2c52;
+    cursor:not-allowed;
+    color:#18233b
+}
+
 </style>
