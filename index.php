@@ -64,7 +64,7 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($pageTitle); ?></title>
+    <title>Eglise | <?php echo htmlspecialchars($pageTitle); ?></title>
     <?php include 'includes/styles.php'; ?>
     <?php include 'includes/formStyle.php'; ?>
     <link rel="stylesheet" href="fonts/tabler/dist/tabler-icons-200.min.css">
@@ -112,6 +112,9 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
                 aria-label="Editer l'eglise" title="Editer le nom l'eglise"><i class="fa-solid fa-pencil"></i></button>
             <button id="deleteEglise" style="width: fit-content; color:#ef4444cc;"
                 aria-label="Supprimer l'eglise" title="Supprimer l'eglise"><i class="fa-solid fa-trash-can"></i></button>
+            <!-- <button id="deleteEglise" style="width: fit-content; color:#ef4444cc;"
+                aria-label="Bilan" title="Voir le bilan graphiquement"><i class="fa-solid fa-bar-chart"></i></button> -->
+
         </div>
 
     </div>
@@ -126,7 +129,8 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
         <div class="wrapper">
             <div class="action-title">
                 <i class="ti ti-alert-triangle" style="color: red;">
-                </i> Toutes les données de la base de données seront supprimées !<br> Etes vous sur de supprimer ?
+                </i> Toutes les données de la base de données seront supprimées !<br>
+                Etes vous sur de supprimer ?
             </div>
             <div class="button-layout">
                 <input type="hidden" name="_method" value="DELETE">
@@ -165,7 +169,7 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
     </div>
 
     <!-- button pour ajouter une nouvel eglise  -->
-    <div class="main-add-button" style=" display: <?php echo htmlspecialchars($contientUne ? 'block' : 'none') ?>;position: fixed; bottom:90px ; right:40px">
+    <!-- <div class="main-add-button" style=" display: <?php echo htmlspecialchars($contientUne ? 'block' : 'none') ?>;position: fixed; bottom:90px ; right:40px">
         <button class="normal-btn" type="button" title="ajouter une nouvelle eglise"
             style="display:flex; 
             justify-content:center;
@@ -174,7 +178,7 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
             font-size: 2rem; border-radius:60% ;width:50px;height:50px ; font-weight:bold">
             <i class="ti ti-plus"></i>
         </button>
-    </div>
+    </div> -->
 
     <footer>
         &copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($projectName); ?>. All rights reserved.
@@ -212,7 +216,7 @@ $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
         const entreData = <?= json_encode($entreData) ?>;
         const sortieData = <?= json_encode($sortieData) ?>;
         const graphTitle = 'Visualisation  mensuel du mouvement de caisse\n (unité Ar)';
-
+        ctx.style.display = 'none';
         new Chart(ctx, {
             type: 'line',
             data: {

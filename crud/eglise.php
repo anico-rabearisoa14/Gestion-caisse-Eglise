@@ -44,6 +44,47 @@ function listeInfoEglise(): ?array
     }
 }
 
+function obtenirEglises(): ?array {
+
+global $pdo;
+    try {
+        $sql = "SELECT * FROM eglise";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($rows !== false) {
+            return $rows;
+        } else {
+            return null;
+        }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        return null;
+    }
+
+}
+
+// lire une eglise seulement
+function obtenirEglise(string $ideglise): ?array {
+
+global $pdo;
+    try {
+        $sql = "SELECT * FROM eglise WHERE ideglise = :ID";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['ID' => $ideglise]);
+        $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($rows !== false) {
+            return $rows;
+        } else {
+            return null;
+        }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        return null;
+    }
+
+}
+
 function getAllBilanEntre(): array
 {
     global $pdo;

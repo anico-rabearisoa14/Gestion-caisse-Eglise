@@ -14,6 +14,7 @@ function adjustDate() {
 
         // Set the value
         dateInput.value = formattedDate;
+        dateInput.setAttribute('max' , formattedDate);
     // });
 }
 
@@ -37,10 +38,11 @@ closeBtn.addEventListener('click', function () {
 
 // show the form modal
 const addButton = document.getElementById('ajout-btn');
-addButton.addEventListener('click', function () {
+addButton.addEventListener('click', function (){
     clearForm();
     document.getElementById('id-record').style.display = 'none';
     document.getElementById('pop-up-form').style.display = '';
+    document.getElementById('final-button').textContent = 'Ajouter';
 });
 
 console.log('Height of nav :' + document.querySelector('nav').offsetHeight);
@@ -55,7 +57,7 @@ document.getElementById('data-table').addEventListener('click', function (e) {
     const id = row.id;
 
     if (target.classList.contains('btn-delete')) {
-        toast('Le solde sera ajuster ! ');
+        toast('Le solde sera modifié!');
         console.log('Delete row:', id);
         document.getElementsByName('id-to-delete')[0].value = id;
         document.getElementById('pop-up-confirm').style.display = '';
@@ -63,8 +65,8 @@ document.getElementById('data-table').addEventListener('click', function (e) {
     } else if (target.classList.contains('btn-update')) {
 
         // show warning message
-    toast(`Alerte ! La modification d’un enregistrement existant peut briser le solde principal. Utilisez-le avec prudence..` , 'warning' , 15000);
-    toast(`Pas toutes les modifications peuvent être acceptée` , 'warning' , 10000);
+    toast(`Soyez vigilant! La modification d'un enregistrement déjà en place  peut causer une diminution du solde principal.` , 'warning' , 8000);
+    // toast(`Pas toutes les modifications peuvent être acceptée` , 'warning' , 10000);
 
         //show the pop-up
         document.getElementById('id-record').style.display = '';
@@ -91,6 +93,7 @@ document.getElementById('data-table').addEventListener('click', function (e) {
         document.getElementsByName('montant')[0].value = Number(montant);
         document.getElementsByName('ancien-montant')[0].value = Number(montant);
         document.getElementsByName('date-operation')[0].value = date;
+        document.getElementById('final-button').textContent = 'Enregistrer';
         console.log('Edit row:', id);
         console.log(id, ideglise, motif, montant, date);
     }

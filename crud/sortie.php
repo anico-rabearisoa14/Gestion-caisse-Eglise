@@ -26,7 +26,15 @@ function getTotalAmount()
 // creer une nouvelle enregistrement
 function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie): array
 {
-    global $pdo;
+    if($ideglise == null){
+        return [
+            'success' => false,
+            'status' => 'error',
+            'message' => 'Échec , l\'ID de l\'Eglise est null'
+        ];
+    }
+    else{
+        global $pdo;
 
     $soldeActuel = getTotalAmount();
     $soldePrevu = $soldeActuel - $montantSortie;
@@ -36,7 +44,7 @@ function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie): array
             'success' => false,
             'status' => 'error',
             'message' => 'Échec, le solde est  insuffisant'
-        ]; //deviendrait
+        ];
     }
 
     try {
@@ -61,6 +69,7 @@ function ajouterSortie($ideglise, $motif, $montantSortie, $dateSortie): array
             'status' => 'error',
             'message' => 'Échec de l\'ajout !'
         ];
+    }
     }
 }
 

@@ -252,6 +252,7 @@
         width: 100%;
         max-width: 1050px;
         margin: 5px auto;
+        border: 1px solid #b6b6b660 ;
     }
 
     .data-table th {
@@ -365,7 +366,7 @@
     /* Toast notifications style */
     #toast-container {
     position: fixed;
-    bottom: 25px;
+    bottom: 45px;
     left: 10px;
     display: flex;
     flex-direction: column;
@@ -379,20 +380,21 @@
     gap: 10px;
     padding: 10px 14px;
     border-radius: 8px;
-    background: #fff;
-    border: 1px solid #ddd;
+    color: white;
+    background-color: #112347;
+    border: 1px solid #ddd; /* #102144 */
     font-size: 14px;
     min-width: 220px;
-    opacity: 0;
+    opacity: 1;
     transform: translateX(-20px);
     transition: opacity 0.2s, transform 0.3s;
 }
 
 .toast.show { opacity: 1; transform: translateX(0);}
-.toast.success { border-left: 4px solid #22c55e; }
-.toast.error   { border-left: 4px solid #ef4444; }
-.toast.info    { border-left: 4px solid #3b82f6; }
-.toast.warning { border-left: 4px solid #f59e0b; }
+.toast.success { border-left: 8px solid #22c55e; }
+.toast.error   { border-left: 8px solid #ef4444; }
+.toast.info    { border-left: 8px solid #3b82f6; }
+.toast.warning { border-left: 8px solid #f59e0b; }
 .toast-close   { cursor: pointer; margin-left: auto; }
 
 .id-eglise{

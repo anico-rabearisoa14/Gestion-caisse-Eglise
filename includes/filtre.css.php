@@ -122,6 +122,7 @@ p{ font-size: var(--text-sm);}
         width: 100%;
         max-width: 1050px;
         margin: 5px auto;
+        border: 1px solid #a09a9a7c;
     }
 
     .filtered-data-table th {

@@ -28,20 +28,24 @@ function getTotalAmount()
 // creer une nouvelle enregistrement
 function ajouterEntre($ideglise, $motif, $montantEntre, $dateEntre): bool
 {
-    global $pdo;
-    try {
-        $sql = "INSERT INTO entre (ideglise, motif, montantEntre, dateEntre)
-                VALUES (:ideglise, :motif, :montantEntre, :dateEntre)";
-        $stmt = $pdo->prepare($sql);
-        return $stmt->execute([
-            ':ideglise'     => $ideglise,
-            ':motif'        => $motif,
-            ':montantEntre' => $montantEntre,
-            ':dateEntre'    => $dateEntre,
-        ]);
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
+    if ($ideglise == null) {
         return false;
+    } else {
+        global $pdo;
+        try {
+            $sql = "INSERT INTO entre (ideglise, motif, montantEntre, dateEntre)
+                VALUES (:ideglise, :motif, :montantEntre, :dateEntre)";
+            $stmt = $pdo->prepare($sql);
+            return $stmt->execute([
+                ':ideglise'     => $ideglise,
+                ':motif'        => $motif,
+                ':montantEntre' => $montantEntre,
+                ':dateEntre'    => $dateEntre,
+            ]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
     }
 }
 
@@ -126,7 +130,7 @@ function supprimerEntre($id): array
                 'success' => false,
                 'status' => 'error',
                 'message' => 'Échec, la suppression rendrait le solde insuffisant '
-                ];
+            ];
         }
 
         $sql = 'DELETE FROM entre WHERE identre = :id';

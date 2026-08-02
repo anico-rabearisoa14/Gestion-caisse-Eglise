@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/shield.php';
 require __DIR__ . '/vendor/autoload.php';
 require_once 'db/databasehelper.php';
 
@@ -14,6 +15,20 @@ function fetchMovements($pdo, $table, $dateCol, $montantCol, $dateBegin, $dateEn
     return ['data' => $rows, 'total' => $total];
 }
 
+//  get eglise name
+function getName($id , $pdo) : ?array {
+try{
+$sql = "SELECT Design FROM eglise WHERE ideglise = :id";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([':id' => $id]);
+$row = $stmt->fetch();
+return ['result' => $row['Design']];
+}
+catch(ErrorException $e){
+    return null;
+}
+}
+
 $dateBegin = $_GET['date-to-print-begin'];
 $dateEnd   = $_GET['date-to-print-end'];
 
@@ -22,6 +37,9 @@ $message_type  = $_SESSION['message_type'] ?? '';
 $message_body  = $_SESSION['message_body'] ?? '';
 
 $formatter = new NumberFormatter('fr_MG', NumberFormatter::CURRENCY);
+
+// Nom eglise
+$nomEglise = getName($_SESSION['ID_EGLISE'] , $pdo);
 
 // Entrée
 $raw1 = fetchMovements($pdo, 'entre', 'dateEntre', 'montantEntre', $dateBegin, $dateEnd);
@@ -54,17 +72,18 @@ foreach ($data2 as $d) {
         <td style="text-align:right;">' . htmlspecialchars($formatter->formatCurrency($d['montant'], 'MGA')) . '</td>
     </tr>';
 }
-
+// th >> background-color: #3b4a6b; color: white;
 $html = '
 <style>
     body  { font-family: Arial, sans-serif; font-size: 12px; }
     h2, p.title { text-align: center; }
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th    { background-color: #3b4a6b; color: white; padding: 8px 10px; text-align: left; }
+    th    { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
     td    { border: 1px solid #ccc; padding: 7px 10px; }
     tr:nth-child(even) { background-color: #f2f2f2; }
 </style>
 
+<h1>' .$nomEglise['result']. '</h1>
 <h2>Mouvement de caisse</h2>
 <p>Entre ' . htmlspecialchars($dateBegin) . ' et ' . htmlspecialchars($dateEnd) . '</p>
 

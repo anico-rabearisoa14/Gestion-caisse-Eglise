@@ -10,5 +10,6 @@ function navClass($page, $currentPage) {
     <a href="index" class="<?php echo navClass('index', $currentPage); ?>">Acceuil</a>
     <a href="Encaisser" class="<?php echo navClass('Encaisser', $currentPage); ?>">Encaisser</a>
     <a href="Decaisser" class="<?php echo navClass('Decaisser', $currentPage); ?>">Décaisser </a>
-    <a href="Bilan" class="<?php echo navClass('Bilan', $currentPage); ?>">Mouvement</a>
+    <a href="Mouvement" class="<?php echo navClass('Mouvement', $currentPage); ?>">Mouvement</a>
+    <a href="Bilan" class="<?php echo navClass('Bilan', $currentPage); ?>">Bilan</a>
 </nav>

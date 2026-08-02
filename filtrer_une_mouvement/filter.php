@@ -48,33 +48,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (empty($dateBegin) || empty($dateEnd)) {
         $_SESSION['filter-message'] = 'Veuillez remplir tous les champs.';
         setSessionMessage('error' , $_SESSION['filter-message']);
-        header('Location: ../Bilan.php');
+        header('Location: ../Mouvement.php');
         exit();
     }
 
     if ($dateBegin > $dateEnd) {
         $_SESSION['filter-message'] = 'La date de début doit être avant la date de fin.';
         setSessionMessage('warning' , $_SESSION['filter-message']);
-        header('Location: ../Bilan.php');
+        header('Location: ../Mouvement.php');
         exit();
     }
 
-    $result1 = handleFilter('entre', $dateBegin, $dateEnd);
-    $result2 = handleFilter('sortie' , $dateBegin, $dateEnd);
+    $resultSortie = handleFilter('sortie' , $dateBegin, $dateEnd);
+    $resultEntre = handleFilter('entre', $dateBegin, $dateEnd);
 
-    if (empty($result1['data']) || empty($result2['data'])){
+    if (empty($resultEntre['data']) || empty($resultSortie['data'])){
         $_SESSION['filter-message'] = 'Aucun résultat trouvé.';
         setSessionMessage('info' , $_SESSION['filter-message']);
     } else {
-        $_SESSION['filtered-data-sortie']  = $result1['data'];
-        $_SESSION['filtered-total-sortie'] = $result1['total'];
+        // sortie
+        $_SESSION['filtered-data-sortie']  = $resultSortie['data'];
+        $_SESSION['filtered-total-sortie'] = $resultSortie['total'];
 
-        $_SESSION['filtered-data-entre']  = $result2['data'];
-        $_SESSION['filtered-total-entre'] = $result2['total'];
+        // entre
+        $_SESSION['filtered-data-entre']  = $resultEntre['data'];
+        $_SESSION['filtered-total-entre'] = $resultEntre['total'];
         
         $_SESSION['filter-message'] = 'Filtre de mouvement appliqueé';
         setSessionMessage('success' , $_SESSION['filter-message']);
         }
-    header('Location: ../Bilan.php');
+    header('Location: ../Mouvement.php');
     exit();
 }
