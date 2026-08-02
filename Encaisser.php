@@ -68,7 +68,7 @@ if (isset($_SESSION['search_results'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($pageTitle); ?></title>
+    <title>Eglise | <?php echo htmlspecialchars($pageTitle); ?></title>
     <link rel="stylesheet" href="fonts/tabler/dist/tabler-icons-200.min.css">
     <link rel="stylesheet" href="fonts/fa/css/all.min.css">
     <?php include 'includes/styles.php'; ?>
@@ -121,7 +121,7 @@ if (isset($_SESSION['search_results'])) {
                         <td><?php echo htmlspecialchars($d['identre']) ?></td>
                         <td><?php echo htmlspecialchars($d['ideglise']) ?></td>
                         <td><?php echo htmlspecialchars($d['motif']) ?></td>
-                        <td style="text-align: end;">
+                        <td style="text-align: end;padding-right:6px">
                             <?php echo htmlspecialchars($formatter->formatCurrency($d['montantEntre'], 'MGA')); ?>
                         </td>
                         <td><?php echo htmlspecialchars($d['dateEntre']) ?></td>
@@ -146,7 +146,7 @@ if (isset($_SESSION['search_results'])) {
     <div id="pop-up-form" class="centered-modal" style="display: none;">
         <div class="wrapper">
             <div class="window-decoration">
-                <h4 class="form-title" style="margin-left: auto;">Completer le formulaire</h4>
+                <h4 class="form-title" style="margin-left: auto;">Ajouter à la caisse</h4>
                 <button id="btn-close" class="close-btn" type="button">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -156,7 +156,8 @@ if (isset($_SESSION['search_results'])) {
                 <input id="_method" type="hidden" name="_method">
                 <input type="hidden" id="id-record" name="id-record">
                 <!-- <label for="ideglise">ID Eglise</label> -->
-                <input type="hidden" name="ideglise" disabled class="id-eglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" readonly required>
+                <input type="hidden" name="ideglise"
+                    class="id-eglise" value="<?php echo htmlspecialchars($_SESSION['ID_EGLISE']); ?>" required>
 
                 <label for="motif">Motif</label>
                 <input type="text" name="motif" required>
@@ -168,7 +169,7 @@ if (isset($_SESSION['search_results'])) {
                 <label for="date-operation">Date</label>
                 <input id="today-date" type="date" name="date-operation">
 
-                <button class="submit-btn" type="submit">Envoyer</button>
+                <button id="final-button" class="submit-btn" type="submit">Ajouter</button>
             </form>
         </div>
     </div>
